@@ -1,0 +1,13 @@
+<p class="text-white font-2xl font-bold text-center mt-5">Contratos</p>
+
+<div class="flex flex-col gap-4 p-5">
+  <div *ngFor="let contrato of contratos"
+  class="border border-gray-800 p-3 rounded text-white">
+    <p>{{ contrato.nome }}</p>
+    <p>{{ contrato.endereco }}</p>
+    <p>{{ contrato.telefone }}</p>
+    <p>{{ contrato.dataLocacao }}</p>
+    <p>{{ getValorTotal(contrato) | currency:'BRL':'symbol':'1.2-2' }}</p>
+  </div>
+</div>
+<p-speeddial [radius]="80" type="semi-circle" direction="up" [style]="{ position: 'absolute', left: 'calc(95% - 2rem)', bottom: '15px' }" (click)="criarContrato()" />

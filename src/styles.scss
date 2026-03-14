@@ -1,1 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
+/* Tailwind v3 Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PrimeNG - Remova os caminhos de 'node_modules' daqui.
+   Vamos colocá-los no lugar certo: no angular.json */
