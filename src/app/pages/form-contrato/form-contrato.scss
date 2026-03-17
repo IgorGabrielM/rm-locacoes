@@ -1,0 +1,21 @@
+::ng-deep .meu-dialog-customizado {
+  width: 80vw;
+  .p-dialog-content {
+    background-color: #1c1917; /* stone-900 */
+    color: white;
+  }
+
+  .p-dialog-footer {
+    background-color: #1c1917;
+
+    .p-button-secondary {
+      background: transparent;
+      color: #ef4444;
+    }
+  }
+
+  .p-dialog-header {
+    background-color: #1c1917;
+    color: white;
+  }
+}

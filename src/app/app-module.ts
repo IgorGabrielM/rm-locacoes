@@ -15,12 +15,18 @@ import {ButtonModule} from 'primeng/button';
 import { FormContrato } from './pages/form-contrato/form-contrato';
 import {HttpClientModule} from '@angular/common/http';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { ContratoDetails } from './pages/contrato-details/contrato-details';
+import {RouterModule} from '@angular/router';
+import {ConfirmDialog} from 'primeng/confirmdialog';
+import {BlockUI} from 'primeng/blockui';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
     App,
     Home,
-    FormContrato
+    FormContrato,
+    ContratoDetails
   ],
   imports: [
     BrowserModule,
@@ -33,7 +39,11 @@ import { SpeedDialModule } from 'primeng/speeddial';
     InputMaskModule,
     ButtonModule,
     SpeedDialModule,
-    HttpClientModule
+    RouterModule,
+    HttpClientModule,
+    ConfirmDialog,
+    BlockUI,
+    ProgressSpinner
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

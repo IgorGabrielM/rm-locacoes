@@ -6,11 +6,8 @@ import {FormContrato} from './pages/form-contrato/form-contrato';
 const routes: Routes = [
   {
     path: 'home',
-    component: Home
-  },
-  {
-    path: 'form-contrato',
-    component: FormContrato
+    component: Home,
+    pathMatch: 'full',
   },
   {
     path: '',
@@ -18,9 +15,13 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: '**',
-    redirectTo: '/home'
-  }
+    path: 'form-contrato',
+    component: FormContrato
+  },
+  {
+    path: 'contrato-details',
+    component: FormContrato
+  },
 ];
 
 @NgModule({

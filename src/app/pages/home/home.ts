@@ -39,4 +39,8 @@ export class Home implements OnInit {
       return acc + (qtd * valor);
     }, 0);
   }
+
+  navegarContratoDetalhes(contrato: Contrato){
+    this.router.navigate(['/form-contrato']);
+  }
 }
