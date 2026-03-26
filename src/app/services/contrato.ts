@@ -22,4 +22,10 @@ export class ContratoService {
   buscarPorId(id: string): Observable<Contrato> {
     return this.http.get<Contrato>(`${this.API}/${id}`);
   }
+
+  assinarDocumento(id: string, signatureBase64: string): Observable<any> {
+    return this.http.patch(`${this.API}/${id}/signature`, {
+      signature: signatureBase64
+    });
+  }
 }

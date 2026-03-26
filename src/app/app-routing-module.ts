@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {Home} from './pages/home/home';
 import {FormContrato} from './pages/form-contrato/form-contrato';
+import {ContratoDetails} from './pages/contrato-details/contrato-details';
 
 const routes: Routes = [
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: 'contrato-details',
-    component: FormContrato
+    component: ContratoDetails
   },
 ];
 

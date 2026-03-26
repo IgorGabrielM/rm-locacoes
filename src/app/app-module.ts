@@ -5,8 +5,9 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import {providePrimeNG} from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import Lara from '@primeng/themes/aura';
 import { Home } from './pages/home/home';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, provideAnimations} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
@@ -20,6 +21,25 @@ import {RouterModule} from '@angular/router';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {BlockUI} from 'primeng/blockui';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {definePreset} from '@primeng/themes';
+
+const MyTheme = definePreset(Lara, {
+  semantic: {
+    primary: {
+      50: '{sky.50}',
+      100: '{sky.100}',
+      200: '{sky.200}',
+      300: '{sky.300}',
+      400: '{sky.400}',
+      500: '{sky.500}', // Esta é a cor principal que você viu sumir
+      600: '{sky.600}',
+      700: '{sky.700}',
+      800: '{sky.800}',
+      900: '{sky.900}',
+      950: '{sky.950}'
+    }
+  }
+});
 
 @NgModule({
   declarations: [
@@ -46,12 +66,15 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     ProgressSpinner
   ],
   providers: [
-    provideBrowserGlobalErrorListeners(),
     providePrimeNG({
       theme: {
-        preset: Aura
+        preset: MyTheme, // Usa o nosso preset com azul forçado
+        options: {
+          darkModeSelector: '.my-app-dark' // Evita que mude sozinho
+        }
       }
-    })
+    }),
+    provideBrowserGlobalErrorListeners()
   ],
   bootstrap: [App]
 })

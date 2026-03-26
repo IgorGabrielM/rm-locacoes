@@ -1,1 +1,82 @@
-<p>contrato-details works!</p>
+<div #conteudo>
+  <div *ngIf="!loading && contrato" class="text-stone-800 flex flex-col gap-2 mt-2 w-11/12 mx-auto">
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Nome:</span>
+      <span class="font-bold text-xl">{{ contrato.nome }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Email:</span>
+      <span class="font-bold text-xl">{{ contrato.email }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">CPF:</span>
+      <span class="font-bold text-xl">{{ contrato.cpf }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">RG:</span>
+      <span class="font-bold text-xl">{{ contrato.rg }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Telefone:</span>
+      <span class="font-bold text-xl">{{ contrato.telefone }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Cidade:</span>
+      <span class="font-bold text-xl">{{ contrato.cidade }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Bairro:</span>
+      <span class="font-bold text-xl">{{ contrato.bairro }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Endereço:</span>
+      <span class="font-bold text-xl">{{ contrato.endereco }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Data de entrega:</span>
+      <span class="font-bold text-xl">{{ contrato.data_entrega | date: 'dd/MM/yyyy' }}</span>
+    </div>
+
+    <div class="flex flex-col">
+      <span class="text-sm -mb-2">Data de locação:</span>
+      <span class="font-bold text-xl">{{ contrato.data_locacao | date: 'dd/MM/yyyy' }}</span>
+    </div>
+
+    <span class="font-bold text-xl">Equipamentos</span>
+    <div *ngFor="let equip of contrato.equipamentos" class="flex flex-col">
+      <span class="font-bold text-xl">{{ equip.descricao }}</span>
+      <span class="font-bold text-xl">{{ equip.valor }}</span>
+      <span class="font-bold text-xl">{{ equip.quantidade }}</span>
+    </div>
+  </div>
+
+  <button *ngIf="!signaturePad" (click)="exportarPDF()">exportarPDF</button>
+
+
+  <div class="w-11/12 mx-auto card flex flex-col align-items-center gap-3">
+    <h3 class="font-bold text-xl">Assinatura do Locatário</h3>
+
+    <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;">
+      <canvas #canvas width="350" height="200"></canvas>
+    </div>
+
+    <div class="flex justify-between">
+      <p-button label="Confirmar Assinatura" icon="pi pi-check"
+                (onClick)="salvarAssinatura()">
+      </p-button>
+      <p-button label="Limpar" icon="pi pi-trash"
+                severity="secondary" (onClick)="limparAssinatura()">
+      </p-button>
+
+    </div>
+  </div>
+</div>
+

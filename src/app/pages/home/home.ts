@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ContratoService} from '../../services/contrato';
 import {Contrato} from '../../interfaces/contrato';
@@ -15,24 +15,27 @@ export class Home implements OnInit {
   constructor(
     private router: Router,
     private contratoService: ContratoService,
-  ) { }
+    private cdr: ChangeDetectorRef
+  ) {
+  }
 
   ngOnInit() {
     this.listarContratos();
   }
 
-  listarContratos(){
+  listarContratos() {
     this.contratoService.listarTodos().subscribe((contratos) => {
       console.log(contratos);
       this.contratos = contratos;
+      this.cdr.detectChanges();
     })
   }
 
-  criarContrato(){
+  criarContrato() {
     this.router.navigate(['/form-contrato']);
   }
 
-  getValorTotal(contrato: Contrato){
+  getValorTotal(contrato: Contrato) {
     return contrato.equipamentos.reduce((acc: number, curr: any) => {
       const qtd = curr.quantidade || 0;
       const valor = curr.valor || 0;
@@ -40,7 +43,11 @@ export class Home implements OnInit {
     }, 0);
   }
 
-  navegarContratoDetalhes(contrato: Contrato){
-    this.router.navigate(['/form-contrato']);
+  navegarContratoDetalhes(contrato: Contrato) {
+    this.router.navigate(['/contrato-details'],
+      {
+        queryParams: {id: contrato.id}
+      }
+    );
   }
 }
