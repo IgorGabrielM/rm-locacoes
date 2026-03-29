@@ -7,7 +7,7 @@ import {Contrato} from '../interfaces/contrato';
   providedIn: 'root'
 })
 export class ContratoService {
-  private readonly API = 'http://localhost:3000/contratos';
+  private readonly API = 'https://backend-locacao.vercel.app/contratos';
 
   constructor(private http: HttpClient) { }
 

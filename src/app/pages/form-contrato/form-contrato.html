@@ -1,7 +1,9 @@
-<div class="flex items-center mx-5 my-5">
-  <i class="pi pi-arrow-left" pButtonIcon (click)="navigateBack()"></i>
-  <p class="w-full text-center text-xl font-bold">Novo Contrato de Locação</p>
+<div class="mb-5 bg-primary w-full flex items-center">
+  <button pButton type="submit" icon="pi pi-arrow-left"
+          class="p-button-primary" (click)="navigateBack()"></button>
+  <span class="font-bold text-white text-lg w-10/12 text-center">Novo contrato</span>
 </div>
+
 <div class="min-h-screen w-full flex justify-center items-center">
   <form class="w-11/12" *ngIf="contratoForm" [formGroup]="contratoForm" (ngSubmit)="salvarContrato()">
     <div class="w-full flex flex-col gap-4">
@@ -55,11 +57,11 @@
         <input pInputText id="data-entrega" formControlName="dataEntrega" type="date">
       </div>
 
-      <hr class="my-4 border-slate-600">
+      <hr class="my-4 border-slate-200">
 
       <div formArrayName="equipamentos">
         <div *ngFor="let equip of equipamentos.controls; let i=index" [formGroupName]="i"
-             class="bg-stone-800 p-4 rounded-lg mb-4 relative shadow-sm">
+             class=" p-4 rounded-lg mb-4 relative border">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="flex flex-col gap-1">
               <label class="font-bold">Equipamento</label>
@@ -70,25 +72,24 @@
               <input pInputText type="number" formControlName="quantidade"/>
             </div>
             <div class="flex flex-col gap-1">
-              <label class="font-bold">Valor (R$)</label>
+              <label class="font-bold">Valor unitário (R$)</label>
               <input pInputText type="number" formControlName="valor"/>
             </div>
             <div class="flex justify-between gap-2">
               <button *ngIf="equipamentos.length > 1" pButton type="button" label="Excluir" icon="pi pi-trash"
                       class="p-button-outlined border-red-300 border p-button-danger w-full"
                       (click)="removerEquipamento(i)"></button>
-
-              <button pButton type="button" label="Adicionar equipamento" icon="pi pi-plus-circle"
-                      class="p-button-outlined w-full" (click)="addEquipamento()"></button>
             </div>
           </div>
         </div>
+        <button pButton type="button" label="Adicionar equipamento" icon="pi pi-plus-circle"
+                class="p-button-outlined w-full" (click)="addEquipamento()"></button>
       </div>
 
 
       <div class="mt-2 mb-5">
         <button pButton type="submit" label="Criar contrato" icon="pi pi-share-alt"
-                class="p-button-primary w-full" [disabled]="contratoForm.invalid"></button>
+                class="p-button-primary w-full disabled:bg-gray-400 disabled:border-gray-400" [disabled]="contratoForm.invalid"></button>
       </div>
     </div>
   </form>

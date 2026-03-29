@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {ContratoService} from '../../services/contrato';
+import {ContratoService} from '../../services/contrato.service';
 import {ConfirmationService} from 'primeng/api';
 
 @Component({
@@ -47,7 +47,6 @@ export class FormContrato implements OnInit {
     this.router.navigate(['../']);
   }
 
-  // Helper para criar o grupo de cada equipamento
   criarEquipamento(): FormGroup {
     return this.fb.group({
       descricao: ['', Validators.required],
@@ -56,7 +55,6 @@ export class FormContrato implements OnInit {
     });
   }
 
-  // Getters para facilitar o acesso no HTML
   get equipamentos() {
     return this.contratoForm.get('equipamentos') as FormArray;
   }
@@ -91,6 +89,7 @@ Seu contrato de locação para o dia ${this.contratoForm.get('dataLocacao')?.val
 Acesse esse link para assinar:
 ${linkAssinatura}
           `;
+            this.router.navigate(['../']);
             const mensagemUrl = encodeURIComponent(mensagem);
             const url = `https://wa.me/${numeroCompleto}?text=${mensagemUrl}`;
             window.open(url, '_blank');

@@ -13,4 +13,5 @@ export interface Contrato {
   data_locacao: string;
   data_entrega: string;
   equipamentos: Equipamento[];
+  signature?: string;
 }

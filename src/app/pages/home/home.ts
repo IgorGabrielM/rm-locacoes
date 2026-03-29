@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ContratoService} from '../../services/contrato';
+import {ContratoService} from '../../services/contrato.service';
 import {Contrato} from '../../interfaces/contrato';
 
 @Component({
@@ -11,6 +11,7 @@ import {Contrato} from '../../interfaces/contrato';
 })
 export class Home implements OnInit {
   contratos: Contrato[] = [];
+  loading: boolean = true;
 
   constructor(
     private router: Router,
@@ -27,6 +28,7 @@ export class Home implements OnInit {
     this.contratoService.listarTodos().subscribe((contratos) => {
       console.log(contratos);
       this.contratos = contratos;
+      this.loading = false;
       this.cdr.detectChanges();
     })
   }

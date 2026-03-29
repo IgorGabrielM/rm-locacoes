@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {Home} from './pages/home/home';
 import {FormContrato} from './pages/form-contrato/form-contrato';
 import {ContratoDetails} from './pages/contrato-details/contrato-details';
+import {Auth} from './pages/auth/auth';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'contrato-details',
     component: ContratoDetails
+  },
+  {
+    path: 'auth',
+    component: Auth
   },
 ];
 

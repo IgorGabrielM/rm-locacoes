@@ -22,6 +22,9 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
 import {BlockUI} from 'primeng/blockui';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {definePreset} from '@primeng/themes';
+import { Auth } from './pages/auth/auth';
+import {SkeletonModule} from 'primeng/skeleton';
+import {TableModule} from 'primeng/table';
 
 const MyTheme = definePreset(Lara, {
   semantic: {
@@ -46,7 +49,8 @@ const MyTheme = definePreset(Lara, {
     App,
     Home,
     FormContrato,
-    ContratoDetails
+    ContratoDetails,
+    Auth
   ],
   imports: [
     BrowserModule,
@@ -63,7 +67,9 @@ const MyTheme = definePreset(Lara, {
     HttpClientModule,
     ConfirmDialog,
     BlockUI,
-    ProgressSpinner
+    ProgressSpinner,
+    SkeletonModule,
+    TableModule
   ],
   providers: [
     providePrimeNG({

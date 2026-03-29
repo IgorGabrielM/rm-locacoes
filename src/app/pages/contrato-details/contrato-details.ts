@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ContratoService} from '../../services/contrato';
+import {ContratoService} from '../../services/contrato.service';
 import {Contrato} from '../../interfaces/contrato';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -19,7 +19,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   signaturePad!: SignaturePad;
   contrato: Contrato;
   loading: boolean = true;
-  deveAssinar: boolean = true;
+  deveAssinar: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,10 +34,12 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.signaturePad = new SignaturePad(this.canvas.nativeElement, {
-      backgroundColor: 'rgba(255, 255, 255, 0)',
-      penColor: 'rgb(0, 0, 0)'
-    });
+    if (this.deveAssinar) {
+      this.signaturePad = new SignaturePad(this.canvas.nativeElement, {
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        penColor: 'rgb(0, 0, 0)'
+      });
+    }
   }
 
   getPrams(){
@@ -97,5 +99,20 @@ export class ContratoDetails implements OnInit, AfterViewInit {
       },
       error: (err) => console.error('Erro ao assinar', err)
     });
+  }
+
+  calcularTotal(): number {
+    if (!this.contrato || !this.contrato.equipamentos) {
+      return 0;
+    }
+    return this.contrato.equipamentos.reduce((total, equip) => {
+      const valor = equip.valor || 0;
+      const qtd = equip.quantidade || 0;
+      return total + (valor * qtd);
+    }, 0);
+  }
+
+  voltar(){
+    this.router.navigate(['/home']);
   }
 }
