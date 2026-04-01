@@ -3,13 +3,13 @@
 </div>
 
 <div *ngIf="loading">
-  <div *ngFor="let i of [1,2]" class="border-round border-1 surface-border px-4 py-1 mb-3 surface-card">
+  <div *ngFor="let i of [1,2,3]" class="border-round border-1 surface-border px-4 py-1 mb-3 surface-card">
     <p-skeleton width="100%" height="150px"></p-skeleton>
   </div>
 </div>
 
 <div *ngIf="!loading" class="flex flex-col gap-4 p-5">
-  <div *ngFor="let contrato of contratos"
+  <div *ngFor="let contrato of contratos.reverse()"
        (click)="navegarContratoDetalhes(contrato)"
   class="border border-gray-800 p-3 rounded">
     <p>{{ contrato.nome }}</p>

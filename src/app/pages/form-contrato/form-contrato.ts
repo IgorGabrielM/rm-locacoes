@@ -3,6 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ContratoService} from '../../services/contrato.service';
 import {ConfirmationService} from 'primeng/api';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-form-contrato',
@@ -14,6 +15,7 @@ import {ConfirmationService} from 'primeng/api';
 export class FormContrato implements OnInit {
   contratoForm!: FormGroup;
   loading = false;
+  responseOfContrato$ = new BehaviorSubject<any>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -30,20 +32,19 @@ export class FormContrato implements OnInit {
   initForm() {
     this.contratoForm = this.fb.group({
       nome: ['', Validators.required],
-      cpf: ['', Validators.required],
-      rg: ['', Validators.required],
+      cpf: [''],
+      rg: [''],
       cidade: ['', Validators.required],
       endereco: ['', Validators.required],
       bairro: ['', Validators.required],
       telefone: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      dataLocacao: ['', Validators.required],
-      dataEntrega: ['', Validators.required],
+      email: ['', Validators.email],
+      dataEntrega: [''],
       equipamentos: this.fb.array([this.criarEquipamento()])
     });
   }
 
-  navigateBack(){
+  navigateBack() {
     this.router.navigate(['../']);
   }
 
@@ -68,42 +69,47 @@ export class FormContrato implements OnInit {
   }
 
   salvarContrato() {
-    if (this.contratoForm.valid) {
-      this.loading = true;
-      console.log('Dados do Contrato:', this.contratoForm.value);
-      this.contratoService.salvar(this.contratoForm.value).subscribe((res) => {
-        console.log('res', res)
+    this.loading = true;
+
+    this.contratoService.salvar(this.contratoForm.value).subscribe({
+      next: (res) => {
+        const novoEstado = {
+          status: '200',
+          message: res.message,
+          telefone: `55${res.telefone.replace(/\D/g, '')}`,
+          id: res.id,
+        };
+
+        this.responseOfContrato$.next(novoEstado); // Notifica o HTML
         this.loading = false;
-        this.confirmationService.confirm({
-          message: 'Deseja enviar o contrato?',
-          header: 'Assinar',
-          acceptLabel: 'Sim',
-          rejectLabel: 'Não',
-          accept: () => {
-            const telefoneLimpo = res.telefone.replace(/\D/g, '');
-            const numeroCompleto = '55' + telefoneLimpo;
-            const linkAssinatura = `http://localhost:4200/contrato-details?id=${res.id}&sign=true`;
-            const mensagem =
-              `Olá ${this.contratoForm.get('nome')?.value}!
+      },
+      error: (err) => {
+        this.responseOfContrato$.next({
+          status: '500',
+          message: err.error?.message || 'Erro ao salvar contrato',
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  fecharModal() {
+    this.responseOfContrato$.next(null);
+    this.navigateBack();
+  }
+
+  enviarContratoParaAssinatura(res: any) {
+    const linkAssinatura = `https://rm-locacoes.vercel.app/contrato-details?id=${res.id}&sign=true`;
+    const mensagem =
+      `Olá ${this.contratoForm.get('nome')?.value}!
 Seu contrato de locação para o dia ${this.contratoForm.get('dataLocacao')?.value} está pronto!
 Acesse esse link para assinar:
 ${linkAssinatura}
           `;
-            this.router.navigate(['../']);
-            const mensagemUrl = encodeURIComponent(mensagem);
-            const url = `https://wa.me/${numeroCompleto}?text=${mensagemUrl}`;
-            window.open(url, '_blank');
-            console.log('Contrato salvo com sucesso!');
-            this.loading = false;
-          },
-          reject: () => {
-            this.loading = false;
-            console.log('Ação cancelada pelo usuário');
-          }
-        })
-      })
-    } else {
-      console.error('Formulário inválido');
-    }
+    this.router.navigate(['../']);
+    const mensagemUrl = encodeURIComponent(mensagem);
+    const url = `https://wa.me/${res.telefone}?text=${mensagemUrl}`;
+    window.open(url, '_blank');
+    this.loading = false;
   }
 }

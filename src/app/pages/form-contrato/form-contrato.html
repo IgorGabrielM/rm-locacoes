@@ -48,11 +48,6 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="data-locacao" class="font-bold">Data da locação</label>
-        <input pInputText id="data-locacao" formControlName="dataLocacao" type="date"/>
-      </div>
-
-      <div class="flex flex-col gap-1">
         <label for="data-entrega" class="font-bold">Data da entrega</label>
         <input pInputText id="data-entrega" formControlName="dataEntrega" type="date">
       </div>
@@ -89,29 +84,62 @@
 
       <div class="mt-2 mb-5">
         <button pButton type="submit" label="Criar contrato" icon="pi pi-share-alt"
-                class="p-button-primary w-full disabled:bg-gray-400 disabled:border-gray-400" [disabled]="contratoForm.invalid"></button>
+                class="p-button-primary w-full disabled:bg-gray-400 disabled:border-gray-400"
+                [disabled]="contratoForm.invalid"></button>
       </div>
     </div>
   </form>
 </div>
 
-<p-confirmdialog styleClass="meu-dialog-customizado">
-  <ng-template #message let-message>
-    @if (message) {
-      <div class="flex flex-col items-center w-full gap-4 border-b border-surface-200 dark:border-surface-700">
-        <i [ngClass]="message.icon" class="!text-6xl text-primary-500"></i>
-        <p>{{ message.message }}</p>
-      </div>
-    }
-  </ng-template>
-</p-confirmdialog>
+<div *ngIf="responseOfContrato$ | async as res"
+     class="fixed inset-0 z-[9999] flex items-center justify-center w-full h-full p-4 bg-black/60 backdrop-blur-sm">
 
-  <p-blockUI [blocked]="loading">
-    <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
-      <p-progressSpinner
-        strokeWidth="4"
-        fill="transparent"
-        animationDuration=".5s">
-      </p-progressSpinner>
+  <div class="relative w-full max-w-2xl">
+    <div class="relative bg-white rounded-xl shadow-2xl border border-gray-200">
+
+      <div class="flex items-center justify-between p-4 border-b border-gray-100">
+        <h3 class="text-xl font-semibold text-gray-900">
+          {{ res.status === '200' ? 'Sucesso' : 'Erro' }}
+        </h3>
+        <button type="button" (click)="fecharModal()" class="text-gray-400 hover:text-gray-900">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div *ngIf="res.status === '200'" class="flex items-center gap-3 p-4 text-green-800 bg-green-50 rounded-lg">
+          <i class="pi pi-check-circle text-xl"></i>
+          <span>{{ res.message }}</span>
+        </div>
+
+        <div *ngIf="res.status !== '200'" class="flex items-center gap-3 p-4 text-red-800 bg-red-50 rounded-lg">
+          <i class="pi pi-times-circle text-xl"></i>
+          <span>{{ res.message }}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 p-4 border-t border-gray-100">
+        <button *ngIf="res.status === '200'"
+                (click)="enviarContratoParaAssinatura(res)"
+                class="bg-blue-600 text-white px-5 py-2.5 rounded-lg">
+          Enviar WhatsApp
+        </button>
+        <button (click)="fecharModal()" class="px-5 py-2.5 border rounded-lg">
+          Fechar
+        </button>
+      </div>
+
     </div>
-  </p-blockUI>
+  </div>
+</div>
+
+<p-blockUI [blocked]="loading">
+  <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
+    <p-progressSpinner
+      strokeWidth="4"
+      fill="transparent"
+      animationDuration=".5s">
+    </p-progressSpinner>
+  </div>
+</p-blockUI>
+
