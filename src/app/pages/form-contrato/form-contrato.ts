@@ -16,12 +16,15 @@ export class FormContrato implements OnInit {
   contratoForm!: FormGroup;
   loading = false;
   responseOfContrato$ = new BehaviorSubject<any>(null);
+  opcoesCidades = ['Indaituba', 'Salto', 'Itu'];
+  opcoesCidadesFiltered = ['Indaituba', 'Salto', 'Itu'];
+  opcoesEquipamentos = ['Betoneira', 'Andaime', 'Escora', 'Plataforma'];
+  opcoesEquipamentosFiltered = ['Betoneira', 'Andaime', 'Escora', 'Plataforma'];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private contratoService: ContratoService,
-    private confirmationService: ConfirmationService
   ) {
   }
 
@@ -34,7 +37,7 @@ export class FormContrato implements OnInit {
       nome: ['', Validators.required],
       cpf: [''],
       rg: [''],
-      cidade: ['', Validators.required],
+      cidade: ['Indaiatuba', Validators.required],
       endereco: ['', Validators.required],
       bairro: ['', Validators.required],
       telefone: ['', Validators.required],
@@ -46,6 +49,20 @@ export class FormContrato implements OnInit {
 
   navigateBack() {
     this.router.navigate(['../']);
+  }
+
+  filtrarCidades(event: any) {
+    let query = event.query;
+    this.opcoesCidadesFiltered = this.opcoesCidades.filter(item =>
+      item.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  filtrarEquipamentos(event: any) {
+    let query = event.query;
+    this.opcoesEquipamentosFiltered = this.opcoesEquipamentos.filter(item =>
+      item.toLowerCase().includes(query.toLowerCase())
+    );
   }
 
   criarEquipamento(): FormGroup {
@@ -80,7 +97,7 @@ export class FormContrato implements OnInit {
           id: res.id,
         };
 
-        this.responseOfContrato$.next(novoEstado); // Notifica o HTML
+        this.responseOfContrato$.next(novoEstado);
         this.loading = false;
       },
       error: (err) => {

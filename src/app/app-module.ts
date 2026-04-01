@@ -25,6 +25,7 @@ import {definePreset} from '@primeng/themes';
 import { Auth } from './pages/auth/auth';
 import {SkeletonModule} from 'primeng/skeleton';
 import {TableModule} from 'primeng/table';
+import {AutoComplete} from 'primeng/autocomplete';
 
 const MyTheme = definePreset(Lara, {
   semantic: {
@@ -69,7 +70,8 @@ const MyTheme = definePreset(Lara, {
     BlockUI,
     ProgressSpinner,
     SkeletonModule,
-    TableModule
+    TableModule,
+    AutoComplete
   ],
   providers: [
     providePrimeNG({

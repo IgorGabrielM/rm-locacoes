@@ -23,8 +23,14 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="cidade" class="font-bold">Cidade</label>
-        <input pInputText id="cidade" formControlName="cidade"/>
+        <label class="font-bold">Cidade</label>
+        <p-autoComplete
+          formControlName="cidade"
+          [suggestions]="opcoesCidadesFiltered"
+          (completeMethod)="filtrarCidades($event)"
+          [dropdown]="true"
+          styleClass="w-full">
+        </p-autoComplete>
       </div>
 
       <div class="flex flex-col gap-1">
@@ -60,8 +66,15 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="flex flex-col gap-1">
               <label class="font-bold">Equipamento</label>
-              <input pInputText formControlName="descricao" placeholder="Ex: Betoneira"/>
+              <p-autoComplete
+                formControlName="descricao"
+                [suggestions]="opcoesEquipamentosFiltered"
+                (completeMethod)="filtrarEquipamentos($event)"
+                [dropdown]="true"
+                styleClass="w-full">
+              </p-autoComplete>
             </div>
+
             <div class="flex flex-col gap-1">
               <label class="font-bold">Quantidade</label>
               <input pInputText type="number" formControlName="quantidade"/>
