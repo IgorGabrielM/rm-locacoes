@@ -13,21 +13,22 @@ import SignaturePad from 'signature_pad';
   styleUrl: './contrato-details.scss',
 })
 export class ContratoDetails implements OnInit, AfterViewInit {
-  @ViewChild('conteudo', { static: false }) conteudo!: ElementRef;
   @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('pdfTemplate') pdfTemplate!: ElementRef;
 
   signaturePad!: SignaturePad;
   contrato: Contrato;
-  loading: boolean = true;
-  deveAssinar: boolean = false;
+  loading = true;
+  deveAssinar = false;
+  gerandoPDF = false;
+  hoje = new Date();
 
   constructor(
     private route: ActivatedRoute,
     private contratoService: ContratoService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.getPrams();
@@ -42,42 +43,70 @@ export class ContratoDetails implements OnInit, AfterViewInit {
     }
   }
 
-  getPrams(){
+  getPrams() {
     const id = this.route.snapshot.queryParamMap.get('id');
-    if (id){
+    if (id) {
       this.getContrato(id);
     }
     this.deveAssinar = this.route.snapshot.queryParamMap.get('sign') === 'true';
-
-    if (this.deveAssinar) {
-      console.log('Abrir modo de assinatura para o ID:', id);
-    }
   }
 
-  getContrato(id: string){
+  getContrato(id: string) {
     this.contratoService.buscarPorId(id).subscribe((contrato: Contrato) => {
       this.contrato = contrato;
       this.loading = false;
       this.cdr.detectChanges();
-      console.log(contrato);
-    })
+    });
   }
 
+  async exportarPDF() {
+    if (!this.contrato || this.gerandoPDF) return;
 
-  exportarPDF() {
-    const data = this.conteudo.nativeElement;
+    this.gerandoPDF = true;
+    this.hoje = new Date();
+    this.cdr.detectChanges();
 
-    html2canvas(data, { scale: 2 }).then((canvas) => {
-      const imgWidth = 208; // Largura A4 em mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const contentDataURL = canvas.toDataURL('image/png');
+    await new Promise(r => setTimeout(r, 300));
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const position = 0;
-
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-      pdf.save('contrato_locacao.pdf');
+    const el = this.pdfTemplate.nativeElement;
+    const canvas = await html2canvas(el, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
     });
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfW = 210;
+    const pdfH = 297;
+    const ratio = pdfW / canvas.width;
+    const scaledH = canvas.height * ratio;
+
+    if (scaledH <= pdfH) {
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, scaledH);
+    } else {
+      const pageHeightPx = Math.floor(pdfH / ratio);
+      let y = 0;
+      let page = 0;
+      while (y < canvas.height) {
+        const sliceH = Math.min(pageHeightPx, canvas.height - y);
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceH;
+        const ctx = pageCanvas.getContext('2d')!;
+        ctx.drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+        if (page > 0) pdf.addPage();
+        pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, sliceH * ratio);
+        y += sliceH;
+        page++;
+      }
+    }
+
+    const nomeArquivo = this.contrato.nome.replace(/[^a-zA-Z0-9]/g, '_');
+    pdf.save(`contrato_${nomeArquivo}.pdf`);
+
+    this.gerandoPDF = false;
+    this.cdr.detectChanges();
   }
 
   limparAssinatura() {
@@ -89,9 +118,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
       alert('Por favor, assine antes de confirmar.');
       return;
     }
-
     const base64 = this.signaturePad.toDataURL('image/png');
-
     this.contratoService.assinarDocumento(this.contrato.id, base64).subscribe({
       next: () => {
         alert('Contrato assinado com sucesso!');
@@ -102,17 +129,13 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   }
 
   calcularTotal(): number {
-    if (!this.contrato || !this.contrato.equipamentos) {
-      return 0;
-    }
+    if (!this.contrato?.equipamentos) return 0;
     return this.contrato.equipamentos.reduce((total, equip) => {
-      const valor = equip.valor || 0;
-      const qtd = equip.quantidade || 0;
-      return total + (valor * qtd);
+      return total + ((equip.valor || 0) * (equip.quantidade || 0));
     }, 0);
   }
 
-  voltar(){
+  voltar() {
     this.router.navigate(['/home']);
   }
 }

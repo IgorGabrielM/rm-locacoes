@@ -1,25 +1,73 @@
-<div class="mb-2 bg-primary w-full h-10 flex items-center justify-between">
-  <span class="font-bold text-white text-lg w-full text-center">Contratos</span>
-</div>
+<div class="min-h-screen bg-surface-muted">
 
-<div *ngIf="loading">
-  <div *ngFor="let i of [1,2,3]" class="border-round border-1 surface-border px-4 py-1 mb-3 surface-card">
-    <p-skeleton width="100%" height="150px"></p-skeleton>
-  </div>
-</div>
+  <!-- Header -->
+  <header class="bg-primary shadow-md sticky top-0 z-10">
+    <div class="flex items-center justify-between px-5 h-14">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-building text-white/70 text-base"></i>
+        <span class="font-semibold text-white tracking-wide text-base">RM Locações</span>
+      </div>
+      <span class="text-white/60 text-xs font-medium uppercase tracking-widest">Contratos</span>
+    </div>
+  </header>
 
-<div *ngIf="!loading" class="flex flex-col gap-4 p-5">
-  <div *ngFor="let contrato of contratos.reverse()"
-       (click)="navegarContratoDetalhes(contrato)"
-  class="border border-gray-800 p-3 rounded">
-    <p>{{ contrato.nome }}</p>
-    <p>{{ contrato.endereco }}</p>
-    <p>{{ contrato.telefone }}</p>
-    <p>{{ contrato.data_locacao }}</p>
-    <div class="flex justify-between items-center">
-      <p>{{ getValorTotal(contrato) | currency:'BRL':'symbol':'1.2-2' }}</p>
-      <span *ngIf="!contrato.signature" class="bg-red-500 flex justify-center text-center text-white text-sm font-bold px-2 pt-0.5 rounded-full">Sem assinatura</span>
+  <!-- Loading skeletons -->
+  <div *ngIf="loading" class="p-5 flex flex-col gap-3">
+    <div *ngFor="let i of [1,2,3]" class="bg-surface rounded-xl border border-surface-border p-4 shadow-card">
+      <p-skeleton width="60%" height="1rem" styleClass="mb-3"></p-skeleton>
+      <p-skeleton width="40%" height="0.875rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton width="30%" height="0.875rem"></p-skeleton>
     </div>
   </div>
+
+  <!-- Contract list -->
+  <div *ngIf="!loading" class="p-5 flex flex-col gap-3">
+    <div
+      *ngFor="let contrato of contratos.slice().reverse()"
+      (click)="navegarContratoDetalhes(contrato)"
+      class="bg-surface rounded-xl border border-surface-border shadow-card hover:shadow-card-hover active:scale-[0.99] transition-all duration-150 cursor-pointer p-4">
+
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-ink text-base truncate">{{ contrato.nome }}</p>
+          <p class="text-ink-muted text-sm mt-0.5 truncate">{{ contrato.endereco }}</p>
+          <p class="text-ink-faint text-xs mt-1">{{ contrato.telefone }}</p>
+        </div>
+        <div class="flex flex-col items-end gap-2 shrink-0">
+          <span class="text-ink font-semibold text-sm">
+            {{ getValorTotal(contrato) | currency:'BRL':'symbol':'1.2-2' }}
+          </span>
+          <span *ngIf="!contrato.signature"
+                class="inline-flex items-center gap-1 bg-red-50 text-red-600 border border-red-200 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            <i class="pi pi-exclamation-triangle text-[10px]"></i>
+            Sem assinatura
+          </span>
+          <span *ngIf="contrato.signature"
+                class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            <i class="pi pi-check text-[10px]"></i>
+            Assinado
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-3 pt-3 border-t border-surface-border flex items-center justify-between">
+        <span class="text-ink-faint text-xs">{{ contrato.data_locacao }}</span>
+        <i class="pi pi-chevron-right text-ink-faint text-xs"></i>
+      </div>
+    </div>
+
+    <div *ngIf="contratos.length === 0" class="text-center py-16 text-ink-muted">
+      <i class="pi pi-folder-open text-4xl mb-3 block text-ink-faint"></i>
+      <p class="font-medium">Nenhum contrato encontrado</p>
+      <p class="text-sm text-ink-faint mt-1">Clique em + para criar o primeiro</p>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button
+    (click)="criarContrato()"
+    class="fixed right-5 bottom-6 w-14 h-14 bg-accent hover:bg-accent-hover text-white rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150 flex items-center justify-center">
+    <i class="pi pi-plus text-xl"></i>
+  </button>
+
 </div>
-<p-button icon="pi pi-plus" class="fixed right-5 bottom-5" (click)="criarContrato()" />

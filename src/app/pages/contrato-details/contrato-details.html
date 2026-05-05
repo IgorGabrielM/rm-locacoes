@@ -1,124 +1,299 @@
-<div class="mb-5 bg-primary w-full flex items-center justify-between">
-  <button pButton type="submit" icon="pi pi-arrow-left"
-          class="p-button-primary" (click)="voltar()"></button>
-  <span class="font-bold text-white text-lg w-10/12 text-center">Detalhes do contrato</span>
-  <button pButton type="submit" icon="pi pi-save"
-          class="p-button-primary" (click)="exportarPDF()"></button>
-</div>
+<div class="min-h-screen bg-surface-muted">
 
-<div #conteudo>
-  <div *ngIf="!loading && contrato" class="text-stone-800 flex flex-col gap-2 mt-2 w-11/12 mx-auto">
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Nome:</span>
-      <span class="font-bold text-xl">{{ contrato.nome }}</span>
+  <!-- Header -->
+  <header class="bg-primary shadow-md sticky top-0 z-10">
+    <div class="flex items-center justify-between px-4 h-14">
+      <button pButton type="button" icon="pi pi-arrow-left"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="voltar()">
+      </button>
+      <span class="font-semibold text-white tracking-wide text-base">Detalhes do Contrato</span>
+      <button pButton type="button" [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              [disabled]="gerandoPDF"
+              (click)="exportarPDF()">
+      </button>
+    </div>
+  </header>
+
+  <div>
+    <div *ngIf="!loading && contrato" class="p-5 flex flex-col gap-4">
+
+      <!-- Client card -->
+      <div class="bg-surface rounded-xl border border-surface-border shadow-card">
+        <div class="px-4 py-3 border-b border-surface-border">
+          <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Dados do Cliente</h2>
+        </div>
+        <div class="p-4 grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <p class="text-xs text-ink-faint mb-0.5">Nome / Razão Social</p>
+            <p class="font-semibold text-ink text-base">{{ contrato.nome }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">CPF</p>
+            <p class="font-medium text-ink">{{ contrato.cpf }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">RG</p>
+            <p class="font-medium text-ink">{{ contrato.rg }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">Telefone</p>
+            <p class="font-medium text-ink">{{ contrato.telefone }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">E-mail</p>
+            <p class="font-medium text-ink">{{ contrato.email }}</p>
+          </div>
+          <div class="col-span-2">
+            <p class="text-xs text-ink-faint mb-0.5">Endereço</p>
+            <p class="font-medium text-ink">{{ contrato.endereco }}, {{ contrato.bairro }} — {{ contrato.cidade }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates card -->
+      <div class="bg-surface rounded-xl border border-surface-border shadow-card">
+        <div class="px-4 py-3 border-b border-surface-border">
+          <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Período da Locação</h2>
+        </div>
+        <div class="p-4 grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">Data de locação</p>
+            <p class="font-semibold text-ink">{{ contrato.data_locacao | date: 'dd/MM/yyyy' }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">Data de entrega</p>
+            <p class="font-semibold text-ink">{{ contrato.data_entrega | date: 'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equipment table -->
+      <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+        <div class="px-4 py-3 border-b border-surface-border">
+          <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Equipamentos</h2>
+        </div>
+        <p-table [value]="contrato.equipamentos" styleClass="p-datatable-sm" [tableStyle]="{'font-size':'0.875rem'}">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="text-ink-muted font-semibold text-xs py-2 px-4">Descrição</th>
+              <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-center">Qtd</th>
+              <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Valor</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-equip>
+            <tr class="border-t border-surface-border">
+              <td class="py-2.5 px-4 text-ink">{{ equip.descricao }}</td>
+              <td class="py-2.5 px-4 text-center text-ink">{{ equip.quantidade }}</td>
+              <td class="py-2.5 px-4 text-right text-ink">{{ equip.valor | currency:'BRL' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer" *ngIf="contrato.equipamentos?.length">
+            <tr class="border-t-2 border-surface-border">
+              <td colspan="2" class="py-3 px-4 text-right font-semibold text-ink text-sm">Total</td>
+              <td class="py-3 px-4 text-right font-bold text-ink text-base">{{ calcularTotal() | currency:'BRL' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Signature section -->
+      <div *ngIf="contrato.signature" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+        <div class="px-4 py-3 border-b border-surface-border flex items-center gap-2">
+          <i class="pi pi-check-circle text-emerald-600 text-sm"></i>
+          <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h2>
+        </div>
+        <div class="p-4 bg-surface-muted">
+          <img [src]="contrato.signature" alt="Assinatura" class="max-h-32 mx-auto">
+        </div>
+      </div>
+
     </div>
 
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Email:</span>
-      <span class="font-bold text-xl">{{ contrato.email }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">CPF:</span>
-      <span class="font-bold text-xl">{{ contrato.cpf }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">RG:</span>
-      <span class="font-bold text-xl">{{ contrato.rg }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Telefone:</span>
-      <span class="font-bold text-xl">{{ contrato.telefone }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Cidade:</span>
-      <span class="font-bold text-xl">{{ contrato.cidade }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Bairro:</span>
-      <span class="font-bold text-xl">{{ contrato.bairro }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Endereço:</span>
-      <span class="font-bold text-xl">{{ contrato.endereco }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Data de entrega:</span>
-      <span class="font-bold text-xl">{{ contrato.data_entrega | date: 'dd/MM/yyyy' }}</span>
-    </div>
-
-    <div class="flex flex-col">
-      <span class="text-sm -mb-2">Data de locação:</span>
-      <span class="font-bold text-xl">{{ contrato.data_locacao | date: 'dd/MM/yyyy' }}</span>
-    </div>
-
-    <span class="font-bold text-xl">Equipamentos</span>
-    <div class="card shadow-sm border-round overflow-hidden">
-      <p-table
-        [value]="contrato.equipamentos"
-        styleClass="p-datatable-gridlines p-datatable-sm shadow-sm"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="bg-primary-50">Descrição</th>
-            <th class="bg-primary-50 text-center">Qtd</th>
-            <th class="bg-primary-50 text-right">Valor</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-equip>
-          <tr>
-            <td>{{ equip.descricao }}</td>
-            <td class="text-center">{{ equip.quantidade }}</td>
-            <td class="text-right">{{ equip.valor | currency:'BRL' }}</td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="footer" *ngIf="contrato.equipamentos?.length">
-          <tr>
-            <td colspan="2" class="text-right font-bold">Total:</td>
-            <td class="text-right font-bold text-xl">
-              {{ calcularTotal() | currency:'BRL' }}
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-
-    <div *ngIf="contrato.signature">
-      <span class="text-xl font-bold -mb-2">Assinatura do cliente</span>
-      <div class="border rounded-md shadow-sm">
-        <img [src]="contrato.signature" alt="Assinatura">
+    <!-- Signature pad -->
+    <div *ngIf="deveAssinar" class="mx-5 mb-5 bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h3 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h3>
+      </div>
+      <div class="p-4 flex flex-col items-center gap-4">
+        <div class="border-2 border-dashed border-surface-border rounded-xl bg-surface-muted overflow-hidden">
+          <canvas #canvas width="350" height="200"></canvas>
+        </div>
+        <div class="flex gap-3 w-full">
+          <button pButton type="button" label="Confirmar" icon="pi pi-check"
+                  [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','flex':'1'}"
+                  (click)="salvarAssinatura()">
+          </button>
+          <button pButton type="button" label="Limpar" icon="pi pi-refresh"
+                  class="p-button-outlined" [style]="{'flex':'1'}"
+                  (click)="limparAssinatura()">
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="deveAssinar" class="w-11/12 mx-auto card flex flex-col align-items-center gap-3">
-    <h3 class="font-bold text-xl">Assinatura do Locatário</h3>
-    <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;">
-      <canvas #canvas width="350" height="200"></canvas>
+  <!-- Loading overlay -->
+  <p-blockUI [blocked]="loading">
+    <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
+      <p-progressSpinner strokeWidth="4" fill="transparent" animationDuration=".5s"></p-progressSpinner>
     </div>
-    <div class="flex justify-between">
-      <p-button label="Confirmar Assinatura" icon="pi pi-check"
-                (onClick)="salvarAssinatura()">
-      </p-button>
-      <p-button label="Limpar" icon="pi pi-trash"
-                severity="secondary" (onClick)="limparAssinatura()">
-      </p-button>
-    </div>
-  </div>
+  </p-blockUI>
+
 </div>
 
-<p-blockUI [blocked]="loading">
-  <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
-    <p-progressSpinner
-      strokeWidth="4"
-      fill="transparent"
-      animationDuration=".5s">
-    </p-progressSpinner>
+<!-- ═══════════════════════════════════════════════════════════
+     TEMPLATE PDF — posicionado fora da tela, sempre renderizado
+     ═══════════════════════════════════════════════════════════ -->
+<div #pdfTemplate *ngIf="contrato"
+     style="position:fixed;left:-9999px;top:0;width:794px;min-height:1123px;display:flex;flex-direction:column;background:#ffffff;font-family:'Inter',Arial,sans-serif;color:#000;font-size:12px;line-height:1.4;">
+
+  <!-- ── Cabeçalho ── -->
+  <div style="padding:40px 48px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:20px;border-bottom:2px solid #000;">
+
+      <!-- Logo / Empresa -->
+      <div>
+        <div style="font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;font-family:'Inter',Arial,sans-serif;">RM</div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:3px;margin-top:2px;">LOCAÇÕES</div>
+        <div style="font-size:10px;color:#555;margin-top:4px;">Locação de Equipamentos</div>
+      </div>
+
+      <!-- Título do documento -->
+      <div style="text-align:right;">
+        <div style="font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Contrato de Locação</div>
+        <div style="font-size:10px;color:#444;margin-top:6px;letter-spacing:0.5px;">
+          Emitido em {{ hoje | date:'dd/MM/yyyy' }} às {{ hoje | date:'HH:mm' }}
+        </div>
+      </div>
+
+    </div>
   </div>
-</p-blockUI>
+
+  <!-- ── Corpo ── cresce para preencher a página -->
+  <div style="flex:1;padding:0 48px 48px;display:flex;flex-direction:column;">
+
+    <!-- Dados do Locatário -->
+    <div style="margin-top:24px;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
+        Dados do Locatário
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+        <tr>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:110px;white-space:nowrap;">Nome</td>
+          <td style="border:1px solid #000;padding:6px 10px;" colspan="3">{{ contrato.nome }}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">CPF</td>
+          <td style="border:1px solid #000;padding:6px 10px;width:160px;">{{ contrato.cpf }}</td>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;width:60px;">RG</td>
+          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.rg }}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">Telefone</td>
+          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.telefone }}</td>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">E-mail</td>
+          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.email }}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">Endereço</td>
+          <td style="border:1px solid #000;padding:6px 10px;" colspan="3">
+            {{ contrato.endereco }}, {{ contrato.bairro }} — {{ contrato.cidade }}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Período -->
+    <div style="margin-top:20px;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
+        Período de Locação
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+        <tr>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Locação</td>
+          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.data_locacao | date:'dd/MM/yyyy' }}</td>
+          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Entrega</td>
+          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.data_entrega | date:'dd/MM/yyyy' }}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Equipamentos -->
+    <div style="margin-top:20px;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
+        Equipamentos Locados
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+        <thead>
+          <tr style="background:#000;color:#fff;">
+            <th style="border:1px solid #000;padding:7px 10px;text-align:left;font-weight:700;">Descrição</th>
+            <th style="border:1px solid #000;padding:7px 10px;text-align:center;font-weight:700;width:55px;">Qtd</th>
+            <th style="border:1px solid #000;padding:7px 10px;text-align:right;font-weight:700;width:120px;">Vl. Unitário</th>
+            <th style="border:1px solid #000;padding:7px 10px;text-align:right;font-weight:700;width:120px;">Vl. Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let equip of contrato.equipamentos; let odd = odd"
+              [style.background]="odd ? '#f9f9f9' : '#ffffff'">
+            <td style="border:1px solid #000;padding:6px 10px;">{{ equip.descricao }}</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:center;">{{ equip.quantidade }}</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ equip.valor | currency:'BRL' }}</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ (equip.valor * equip.quantidade) | currency:'BRL' }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr style="background:#000;color:#fff;">
+            <td colspan="3" style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">
+              TOTAL GERAL
+            </td>
+            <td style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:14px;">
+              {{ calcularTotal() | currency:'BRL' }}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Espaçador: empurra assinaturas para o fim da página quando o conteúdo é curto -->
+    <div style="flex:1;min-height:32px;"></div>
+
+    <!-- Assinaturas -->
+    <div style="margin-top:0;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;color:#000;">
+        Assinaturas
+      </div>
+      <div style="display:flex;gap:48px;">
+
+        <!-- Locatário -->
+        <div style="flex:1;text-align:center;">
+          <div *ngIf="contrato.signature"
+               style="height:90px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #000;margin-bottom:6px;">
+            <img [src]="contrato.signature" style="max-height:80px;max-width:100%;">
+          </div>
+          <div *ngIf="!contrato.signature"
+               style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;">
+          </div>
+          <div style="font-size:10px;font-weight:600;margin-top:4px;">{{ contrato.nome }}</div>
+          <div style="font-size:9px;color:#555;margin-top:2px;">Locatário(a)</div>
+        </div>
+
+        <!-- Locadora -->
+        <div style="flex:1;text-align:center;">
+          <div style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;"></div>
+          <div style="font-size:10px;font-weight:600;margin-top:4px;">RM Locações</div>
+          <div style="font-size:9px;color:#555;margin-top:2px;">Locadora — Responsável</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div style="margin-top:36px;padding-top:12px;border-top:1px solid #ccc;font-size:9px;color:#777;text-align:center;">
+      RM Locações · Documento gerado em {{ hoje | date:'dd/MM/yyyy' }} às {{ hoje | date:'HH:mm' }} ·
+      Este documento é um comprovante de contrato de locação de equipamentos.
+    </div>
+
+  </div>
+</div>

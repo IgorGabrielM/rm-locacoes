@@ -1,158 +1,206 @@
-<div class="mb-5 bg-primary w-full flex items-center">
-  <button pButton type="submit" icon="pi pi-arrow-left"
-          class="p-button-primary" (click)="navigateBack()"></button>
-  <span class="font-bold text-white text-lg w-10/12 text-center">Novo contrato</span>
-</div>
+<div class="min-h-screen bg-surface-muted">
 
-<div class="min-h-screen w-full flex justify-center items-center">
-  <form class="w-11/12" *ngIf="contratoForm" [formGroup]="contratoForm" (ngSubmit)="salvarContrato()">
-    <div class="w-full flex flex-col gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="nome" class="font-bold">Nome/Razão Social</label>
-        <input pInputText id="nome" formControlName="nome" class="w-full"/>
+  <!-- Header -->
+  <header class="bg-primary shadow-md sticky top-0 z-10">
+    <div class="flex items-center px-4 h-14 gap-3">
+      <button pButton type="button" icon="pi pi-arrow-left"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="navigateBack()">
+      </button>
+      <span class="font-semibold text-white tracking-wide text-base">Novo Contrato</span>
+    </div>
+  </header>
+
+  <form *ngIf="contratoForm" [formGroup]="contratoForm" (ngSubmit)="salvarContrato()" class="p-5 flex flex-col gap-4 pb-24">
+
+    <!-- Client section -->
+    <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Dados do Cliente</h2>
       </div>
+      <div class="p-4 flex flex-col gap-4">
 
-      <div class="flex flex-col gap-1">
-        <label for="cpf" class="font-bold">CPF</label>
-        <p-inputMask id="cpf" formControlName="cpf" mask="999.999.999-99" styleClass="w-full"></p-inputMask>
-      </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="nome" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Nome / Razão Social</label>
+          <input pInputText id="nome" formControlName="nome" class="w-full"/>
+        </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rg" class="font-bold">RG</label>
-        <p-inputMask id="rg" formControlName="rg" mask="99.999.999-*" styleClass="w-full"></p-inputMask>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="font-bold">Cidade</label>
-        <p-autoComplete
-          formControlName="cidade"
-          [suggestions]="opcoesCidadesFiltered"
-          (completeMethod)="filtrarCidades($event)"
-          [dropdown]="true"
-          styleClass="w-full">
-        </p-autoComplete>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="endereco" class="font-bold">Endereço</label>
-        <input pInputText id="endereco" formControlName="endereco"/>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="bairro" class="font-bold">Bairro</label>
-        <input pInputText id="bairro" formControlName="bairro"/>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="telefone" class="font-bold">Telefone</label>
-        <p-inputMask id="telefone" formControlName="telefone" mask="(99) 99999-9999" styleClass="w-full"></p-inputMask>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="email" class="font-bold">E-mail</label>
-        <input pInputText type="email" id="email" formControlName="email"/>
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="data-entrega" class="font-bold">Data da entrega</label>
-        <input pInputText id="data-entrega" formControlName="dataEntrega" type="date">
-      </div>
-
-      <hr class="my-4 border-slate-200">
-
-      <div formArrayName="equipamentos">
-        <div *ngFor="let equip of equipamentos.controls; let i=index" [formGroupName]="i"
-             class=" p-4 rounded-lg mb-4 relative border">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="flex flex-col gap-1">
-              <label class="font-bold">Equipamento</label>
-              <p-autoComplete
-                formControlName="descricao"
-                [suggestions]="opcoesEquipamentosFiltered"
-                (completeMethod)="filtrarEquipamentos($event)"
-                [dropdown]="true"
-                styleClass="w-full">
-              </p-autoComplete>
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <label class="font-bold">Quantidade</label>
-              <input pInputText type="number" formControlName="quantidade"/>
-            </div>
-            <div class="flex flex-col gap-1">
-              <label class="font-bold">Valor unitário (R$)</label>
-              <input pInputText type="number" formControlName="valor"/>
-            </div>
-            <div class="flex justify-between gap-2">
-              <button *ngIf="equipamentos.length > 1" pButton type="button" label="Excluir" icon="pi pi-trash"
-                      class="p-button-outlined border-red-300 border p-button-danger w-full"
-                      (click)="removerEquipamento(i)"></button>
-            </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label for="cpf" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">CPF</label>
+            <p-inputMask id="cpf" formControlName="cpf" mask="999.999.999-99" styleClass="w-full"></p-inputMask>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="rg" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">RG</label>
+            <p-inputMask id="rg" formControlName="rg" mask="99.999.999-*" styleClass="w-full"></p-inputMask>
           </div>
         </div>
-        <button pButton type="button" label="Adicionar equipamento" icon="pi pi-plus-circle"
-                class="p-button-outlined w-full" (click)="addEquipamento()"></button>
-      </div>
 
+        <div class="flex flex-col gap-1.5">
+          <label for="telefone" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Telefone</label>
+          <p-inputMask id="telefone" formControlName="telefone" mask="(99) 99999-9999" styleClass="w-full"></p-inputMask>
+        </div>
 
-      <div class="mt-2 mb-5">
-        <button pButton type="submit" label="Criar contrato" icon="pi pi-share-alt"
-                class="p-button-primary w-full disabled:bg-gray-400 disabled:border-gray-400"
-                [disabled]="contratoForm.invalid"></button>
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">E-mail</label>
+          <input pInputText type="email" id="email" formControlName="email" class="w-full"/>
+        </div>
+
       </div>
     </div>
+
+    <!-- Address section -->
+    <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Endereço</h2>
+      </div>
+      <div class="p-4 flex flex-col gap-4">
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Cidade</label>
+          <p-autoComplete
+            formControlName="cidade"
+            [suggestions]="opcoesCidadesFiltered"
+            (completeMethod)="filtrarCidades($event)"
+            [dropdown]="true"
+            styleClass="w-full">
+          </p-autoComplete>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="bairro" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Bairro</label>
+          <input pInputText id="bairro" formControlName="bairro" class="w-full"/>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="endereco" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Endereço</label>
+          <input pInputText id="endereco" formControlName="endereco" class="w-full"/>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Date section -->
+    <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Período</h2>
+      </div>
+      <div class="p-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="data-entrega" class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Data da Entrega</label>
+          <input pInputText id="data-entrega" formControlName="dataEntrega" type="date" class="w-full"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equipment section -->
+    <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Equipamentos</h2>
+      </div>
+      <div class="p-4 flex flex-col gap-3" formArrayName="equipamentos">
+
+        <div *ngFor="let equip of equipamentos.controls; let i=index" [formGroupName]="i"
+             class="border border-surface-border rounded-xl p-4 bg-surface-muted flex flex-col gap-3">
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Item {{ i + 1 }}</span>
+            <button *ngIf="equipamentos.length > 1" pButton type="button" icon="pi pi-trash"
+                    class="p-button-text p-button-danger p-button-sm"
+                    [style]="{'padding':'4px','height':'auto','min-width':'auto'}"
+                    (click)="removerEquipamento(i)">
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Equipamento</label>
+            <p-autoComplete
+              formControlName="descricao"
+              [suggestions]="opcoesEquipamentosFiltered"
+              (completeMethod)="filtrarEquipamentos($event)"
+              [dropdown]="true"
+              styleClass="w-full">
+            </p-autoComplete>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Quantidade</label>
+              <input pInputText type="number" formControlName="quantidade" class="w-full"/>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Valor (R$)</label>
+              <input pInputText type="number" formControlName="valor" class="w-full"/>
+            </div>
+          </div>
+
+        </div>
+
+        <button pButton type="button" label="Adicionar equipamento" icon="pi pi-plus"
+                class="p-button-outlined w-full"
+                [style]="{'border-color':'#1e3a5f','color':'#1e3a5f'}"
+                (click)="addEquipamento()">
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button pButton type="submit" label="Criar Contrato" icon="pi pi-check"
+            [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','padding':'0.875rem','font-size':'1rem','font-weight':'600'}"
+            [disabled]="contratoForm.invalid">
+    </button>
+
   </form>
+
 </div>
 
+<!-- Success/Error Modal -->
 <div *ngIf="responseOfContrato$ | async as res"
-     class="fixed inset-0 z-[9999] flex items-center justify-center w-full h-full p-4 bg-black/60 backdrop-blur-sm">
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm">
 
-  <div class="relative w-full max-w-2xl">
-    <div class="relative bg-white rounded-xl shadow-2xl border border-gray-200">
+  <div class="w-full max-w-sm bg-surface rounded-2xl shadow-2xl border border-surface-border overflow-hidden">
 
-      <div class="flex items-center justify-between p-4 border-b border-gray-100">
-        <h3 class="text-xl font-semibold text-gray-900">
-          {{ res.status === '200' ? 'Sucesso' : 'Erro' }}
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border">
+      <div class="flex items-center gap-2.5">
+        <div [class]="res.status === '200'
+               ? 'w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center'
+               : 'w-8 h-8 rounded-full bg-red-50 flex items-center justify-center'">
+          <i [class]="res.status === '200' ? 'pi pi-check text-emerald-600' : 'pi pi-times text-red-600'"></i>
+        </div>
+        <h3 class="font-semibold text-ink">
+          {{ res.status === '200' ? 'Contrato criado' : 'Erro ao criar' }}
         </h3>
-        <button type="button" (click)="fecharModal()" class="text-gray-400 hover:text-gray-900">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
       </div>
-
-      <div class="p-6">
-        <div *ngIf="res.status === '200'" class="flex items-center gap-3 p-4 text-green-800 bg-green-50 rounded-lg">
-          <i class="pi pi-check-circle text-xl"></i>
-          <span>{{ res.message }}</span>
-        </div>
-
-        <div *ngIf="res.status !== '200'" class="flex items-center gap-3 p-4 text-red-800 bg-red-50 rounded-lg">
-          <i class="pi pi-times-circle text-xl"></i>
-          <span>{{ res.message }}</span>
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-3 p-4 border-t border-gray-100">
-        <button *ngIf="res.status === '200'"
-                (click)="enviarContratoParaAssinatura(res)"
-                class="bg-blue-600 text-white px-5 py-2.5 rounded-lg">
-          Enviar WhatsApp
-        </button>
-        <button (click)="fecharModal()" class="px-5 py-2.5 border rounded-lg">
-          Fechar
-        </button>
-      </div>
-
+      <button type="button" (click)="fecharModal()"
+              class="text-ink-faint hover:text-ink transition-colors p-1">
+        <i class="pi pi-times text-sm"></i>
+      </button>
     </div>
+
+    <div class="p-5">
+      <p class="text-ink-muted text-sm">{{ res.message }}</p>
+    </div>
+
+    <div class="flex gap-3 px-5 pb-5">
+      <button *ngIf="res.status === '200'"
+              (click)="enviarContratoParaAssinatura(res)"
+              class="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+        <i class="pi pi-whatsapp"></i>
+        Enviar WhatsApp
+      </button>
+      <button (click)="fecharModal()"
+              class="flex-1 py-2.5 border border-surface-border rounded-xl text-sm font-semibold text-ink-muted hover:bg-surface-muted transition-colors">
+        Fechar
+      </button>
+    </div>
+
   </div>
 </div>
 
+<!-- Loading overlay -->
 <p-blockUI [blocked]="loading">
   <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
-    <p-progressSpinner
-      strokeWidth="4"
-      fill="transparent"
-      animationDuration=".5s">
-    </p-progressSpinner>
+    <p-progressSpinner strokeWidth="4" fill="transparent" animationDuration=".5s"></p-progressSpinner>
   </div>
 </p-blockUI>
-
