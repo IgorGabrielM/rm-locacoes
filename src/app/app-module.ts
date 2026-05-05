@@ -17,6 +17,7 @@ import { FormContrato } from './pages/form-contrato/form-contrato';
 import {HttpClientModule} from '@angular/common/http';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { ContratoDetails } from './pages/contrato-details/contrato-details';
+import { PdfTemplate } from './pages/contrato-details/pdf-template/pdf-template';
 import {RouterModule} from '@angular/router';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {BlockUI} from 'primeng/blockui';
@@ -51,6 +52,7 @@ const MyTheme = definePreset(Lara, {
     Home,
     FormContrato,
     ContratoDetails,
+    PdfTemplate,
     Auth
   ],
   imports: [

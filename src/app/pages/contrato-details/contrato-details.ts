@@ -5,6 +5,7 @@ import {Contrato} from '../../interfaces/contrato';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import SignaturePad from 'signature_pad';
+import {PdfTemplate} from './pdf-template/pdf-template';
 
 @Component({
   selector: 'app-contrato-details',
@@ -14,7 +15,7 @@ import SignaturePad from 'signature_pad';
 })
 export class ContratoDetails implements OnInit, AfterViewInit {
   @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('pdfTemplate') pdfTemplate!: ElementRef;
+  @ViewChild(PdfTemplate) pdfTemplate!: PdfTemplate;
 
   signaturePad!: SignaturePad;
   contrato: Contrato;
@@ -68,7 +69,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
 
     await new Promise(r => setTimeout(r, 300));
 
-    const el = this.pdfTemplate.nativeElement;
+    const el = this.pdfTemplate.elementRef.nativeElement;
     const canvas = await html2canvas(el, {
       scale: 2.5,
       useCORS: true,

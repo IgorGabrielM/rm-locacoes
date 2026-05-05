@@ -12,6 +12,17 @@ import {Contrato} from '../../interfaces/contrato';
 export class Home implements OnInit {
   contratos: Contrato[] = [];
   loading: boolean = true;
+  termoBusca = '';
+
+  get contratosFiltrados(): Contrato[] {
+    const termo = this.termoBusca.trim().toLowerCase();
+    const lista = this.contratos.slice().reverse();
+    if (!termo) return lista;
+    return lista.filter(c =>
+      [c.id, c.nome, c.cpf, c.rg, c.endereco, c.bairro, c.telefone, c.email]
+        .some(v => v?.toLowerCase().includes(termo))
+    );
+  }
 
   constructor(
     private router: Router,

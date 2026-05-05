@@ -1,6 +1,4 @@
 <div class="min-h-screen bg-surface-muted">
-
-  <!-- Header -->
   <header class="bg-primary shadow-md sticky top-0 z-10">
     <div class="flex items-center justify-between px-4 h-14">
       <button pButton type="button" icon="pi pi-arrow-left"
@@ -18,8 +16,6 @@
 
   <div>
     <div *ngIf="!loading && contrato" class="p-5 flex flex-col gap-4">
-
-      <!-- Client card -->
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
         <div class="px-4 py-3 border-b border-surface-border">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Dados do Cliente</h2>
@@ -52,7 +48,6 @@
         </div>
       </div>
 
-      <!-- Dates card -->
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
         <div class="px-4 py-3 border-b border-surface-border">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Período da Locação</h2>
@@ -69,7 +64,6 @@
         </div>
       </div>
 
-      <!-- Equipment table -->
       <div class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
         <div class="px-4 py-3 border-b border-surface-border">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Equipamentos</h2>
@@ -143,157 +137,5 @@
 
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     TEMPLATE PDF — posicionado fora da tela, sempre renderizado
-     ═══════════════════════════════════════════════════════════ -->
-<div #pdfTemplate *ngIf="contrato"
-     style="position:fixed;left:-9999px;top:0;width:794px;min-height:1123px;display:flex;flex-direction:column;background:#ffffff;font-family:'Inter',Arial,sans-serif;color:#000;font-size:12px;line-height:1.4;">
-
-  <!-- ── Cabeçalho ── -->
-  <div style="padding:40px 48px 0;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:20px;border-bottom:2px solid #000;">
-
-      <!-- Logo / Empresa -->
-      <div>
-        <div style="font-size:32px;font-weight:900;letter-spacing:-1px;line-height:1;font-family:'Inter',Arial,sans-serif;">RM</div>
-        <div style="font-size:13px;font-weight:700;letter-spacing:3px;margin-top:2px;">LOCAÇÕES</div>
-        <div style="font-size:10px;color:#555;margin-top:4px;">Locação de Equipamentos</div>
-      </div>
-
-      <!-- Título do documento -->
-      <div style="text-align:right;">
-        <div style="font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Contrato de Locação</div>
-        <div style="font-size:10px;color:#444;margin-top:6px;letter-spacing:0.5px;">
-          Emitido em {{ hoje | date:'dd/MM/yyyy' }} às {{ hoje | date:'HH:mm' }}
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── Corpo ── cresce para preencher a página -->
-  <div style="flex:1;padding:0 48px 48px;display:flex;flex-direction:column;">
-
-    <!-- Dados do Locatário -->
-    <div style="margin-top:24px;">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
-        Dados do Locatário
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
-        <tr>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:110px;white-space:nowrap;">Nome</td>
-          <td style="border:1px solid #000;padding:6px 10px;" colspan="3">{{ contrato.nome }}</td>
-        </tr>
-        <tr>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">CPF</td>
-          <td style="border:1px solid #000;padding:6px 10px;width:160px;">{{ contrato.cpf }}</td>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;width:60px;">RG</td>
-          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.rg }}</td>
-        </tr>
-        <tr>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">Telefone</td>
-          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.telefone }}</td>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">E-mail</td>
-          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.email }}</td>
-        </tr>
-        <tr>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;white-space:nowrap;">Endereço</td>
-          <td style="border:1px solid #000;padding:6px 10px;" colspan="3">
-            {{ contrato.endereco }}, {{ contrato.bairro }} — {{ contrato.cidade }}
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- Período -->
-    <div style="margin-top:20px;">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
-        Período de Locação
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
-        <tr>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Locação</td>
-          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.data_locacao | date:'dd/MM/yyyy' }}</td>
-          <td style="border:1px solid #000;padding:6px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Entrega</td>
-          <td style="border:1px solid #000;padding:6px 10px;">{{ contrato.data_entrega | date:'dd/MM/yyyy' }}</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- Equipamentos -->
-    <div style="margin-top:20px;">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;color:#000;">
-        Equipamentos Locados
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
-        <thead>
-          <tr style="background:#000;color:#fff;">
-            <th style="border:1px solid #000;padding:7px 10px;text-align:left;font-weight:700;">Descrição</th>
-            <th style="border:1px solid #000;padding:7px 10px;text-align:center;font-weight:700;width:55px;">Qtd</th>
-            <th style="border:1px solid #000;padding:7px 10px;text-align:right;font-weight:700;width:120px;">Vl. Unitário</th>
-            <th style="border:1px solid #000;padding:7px 10px;text-align:right;font-weight:700;width:120px;">Vl. Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let equip of contrato.equipamentos; let odd = odd"
-              [style.background]="odd ? '#f9f9f9' : '#ffffff'">
-            <td style="border:1px solid #000;padding:6px 10px;">{{ equip.descricao }}</td>
-            <td style="border:1px solid #000;padding:6px 10px;text-align:center;">{{ equip.quantidade }}</td>
-            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ equip.valor | currency:'BRL' }}</td>
-            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ (equip.valor * equip.quantidade) | currency:'BRL' }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr style="background:#000;color:#fff;">
-            <td colspan="3" style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">
-              TOTAL GERAL
-            </td>
-            <td style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:14px;">
-              {{ calcularTotal() | currency:'BRL' }}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <!-- Espaçador: empurra assinaturas para o fim da página quando o conteúdo é curto -->
-    <div style="flex:1;min-height:32px;"></div>
-
-    <!-- Assinaturas -->
-    <div style="margin-top:0;">
-      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;color:#000;">
-        Assinaturas
-      </div>
-      <div style="display:flex;gap:48px;">
-
-        <!-- Locatário -->
-        <div style="flex:1;text-align:center;">
-          <div *ngIf="contrato.signature"
-               style="height:90px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #000;margin-bottom:6px;">
-            <img [src]="contrato.signature" style="max-height:80px;max-width:100%;">
-          </div>
-          <div *ngIf="!contrato.signature"
-               style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;">
-          </div>
-          <div style="font-size:10px;font-weight:600;margin-top:4px;">{{ contrato.nome }}</div>
-          <div style="font-size:9px;color:#555;margin-top:2px;">Locatário(a)</div>
-        </div>
-
-        <!-- Locadora -->
-        <div style="flex:1;text-align:center;">
-          <div style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;"></div>
-          <div style="font-size:10px;font-weight:600;margin-top:4px;">RM Locações</div>
-          <div style="font-size:9px;color:#555;margin-top:2px;">Locadora — Responsável</div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Rodapé -->
-    <div style="margin-top:36px;padding-top:12px;border-top:1px solid #ccc;font-size:9px;color:#777;text-align:center;">
-      RM Locações · Documento gerado em {{ hoje | date:'dd/MM/yyyy' }} às {{ hoje | date:'HH:mm' }} ·
-      Este documento é um comprovante de contrato de locação de equipamentos.
-    </div>
-
-  </div>
-</div>
+<!-- Template PDF renderizado fora da tela para captura -->
+<app-pdf-template *ngIf="contrato" [contrato]="contrato" [hoje]="hoje"></app-pdf-template>
