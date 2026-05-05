@@ -119,7 +119,7 @@ export class FormContrato implements OnInit {
     const linkAssinatura = `https://rm-locacoes.vercel.app/contrato-details?id=${res.id}&sign=true`;
     const mensagem =
       `Olá ${this.contratoForm.get('nome')?.value}!
-Seu contrato de locação para o dia ${this.contratoForm.get('dataLocacao')?.value} está pronto!
+Seu contrato de locação está pronto!
 Acesse esse link para assinar:
 ${linkAssinatura}
           `;

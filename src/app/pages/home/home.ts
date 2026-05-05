@@ -17,11 +17,17 @@ export class Home implements OnInit {
   get contratosFiltrados(): Contrato[] {
     const termo = this.termoBusca.trim().toLowerCase();
     const lista = this.contratos.slice().reverse();
-    if (!termo) return lista;
-    return lista.filter(c =>
-      [c.id, c.nome, c.cpf, c.rg, c.endereco, c.bairro, c.telefone, c.email]
-        .some(v => v?.toLowerCase().includes(termo))
-    );
+    const filtrada = termo
+      ? lista.filter(c =>
+          [c.id, c.nome, c.cpf, c.rg, c.endereco, c.bairro, c.telefone, c.email]
+            .some(v => v?.toLowerCase().includes(termo))
+        )
+      : lista;
+    return filtrada.sort((a, b) => {
+      const aEnc = a.status === 'Encerrado' ? 1 : 0;
+      const bEnc = b.status === 'Encerrado' ? 1 : 0;
+      return aEnc - bEnc;
+    });
   }
 
   constructor(

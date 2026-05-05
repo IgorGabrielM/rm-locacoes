@@ -1,6 +1,4 @@
 <div class="min-h-screen bg-surface-muted">
-
-  <!-- Header -->
   <header class="bg-primary shadow-md sticky top-0 z-10">
     <div class="flex items-center justify-between px-5 h-14">
       <div class="flex items-center gap-2">
@@ -12,11 +10,12 @@
   </header>
 
   <!-- Search bar -->
-  <div *ngIf="!loading && contratos.length > 0" class="sticky top-14 z-[9] bg-surface-muted px-4 py-3 border-b border-surface-border">
+  <div *ngIf="!loading && contratos.length > 0"
+       class="sticky top-14 z-[9] bg-surface-muted px-4 py-3 border-b border-surface-border">
     <div class="relative">
       <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint text-sm pointer-events-none"></i>
       <input type="text" [(ngModel)]="termoBusca" placeholder="Buscar por nome, CPF, telefone..."
-             class="w-full pl-9 pr-9 py-2 text-sm rounded-xl border border-surface-border bg-surface text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30" />
+             class="w-full pl-9 pr-9 py-2 text-sm rounded-xl border border-surface-border bg-surface text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-primary/30"/>
       <button *ngIf="termoBusca" (click)="termoBusca = ''"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition-colors">
         <i class="pi pi-times text-xs"></i>
@@ -33,11 +32,12 @@
     </div>
   </div>
 
-  <!-- Empty state -->
+  <!-- Lista Vazia -->
   <div *ngIf="!loading && contratos.length === 0"
        class="flex flex-col items-center justify-center px-8 text-center"
        style="min-height: calc(100vh - 56px);">
-    <div class="w-24 h-24 rounded-3xl bg-surface border border-surface-border shadow-card flex items-center justify-center mb-6">
+    <div
+      class="w-24 h-24 rounded-3xl bg-surface border border-surface-border shadow-card flex items-center justify-center mb-6">
       <i class="pi pi-file-plus text-4xl text-ink-faint"></i>
     </div>
     <h2 class="text-xl font-semibold text-ink mb-2">Nenhum contrato ainda</h2>
@@ -50,7 +50,7 @@
     </button>
   </div>
 
-  <!-- No search results -->
+  <!-- Nenhum resultado -->
   <div *ngIf="!loading && contratos.length > 0 && contratosFiltrados.length === 0"
        class="flex flex-col items-center justify-center px-8 py-20 text-center">
     <i class="pi pi-search text-4xl text-ink-faint mb-4"></i>
@@ -58,8 +58,9 @@
     <p class="text-sm text-ink-faint mt-1">Tente buscar por outro nome, CPF ou telefone.</p>
   </div>
 
-  <!-- Contract list -->
-  <div *ngIf="!loading && contratosFiltrados.length > 0" class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- Lista -->
+  <div *ngIf="!loading && contratosFiltrados.length > 0"
+       class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div
       *ngFor="let contrato of contratosFiltrados"
       (click)="navegarContratoDetalhes(contrato)"
@@ -75,21 +76,23 @@
           <span class="text-ink font-semibold text-sm">
             {{ getValorTotal(contrato) | currency:'BRL':'symbol':'1.2-2' }}
           </span>
-          <span *ngIf="!contrato.signature"
-                class="inline-flex items-center gap-1 bg-red-50 text-red-600 border border-red-200 text-xs font-medium px-2.5 py-0.5 rounded-full">
-            <i class="pi pi-exclamation-triangle text-[10px]"></i>
-            Sem assinatura
-          </span>
-          <span *ngIf="contrato.signature"
-                class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium px-2.5 py-0.5 rounded-full">
-            <i class="pi pi-check text-[10px]"></i>
-            Assinado
+          <span *ngIf="contrato.status"
+                  class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full border"
+                  [ngClass]="{
+            'bg-emerald-50 text-emerald-700 border-emerald-200': contrato.status === 'Em andamento',
+            'bg-red-50 text-red-700 border-red-200': contrato.status === 'Sem assinatura',
+            'bg-gray-100 text-gray-600 border-gray-300': contrato.status === 'Encerrado'
+          }">
+          <i *ngIf="contrato.status === 'Em andamento'" class="pi pi-check text-[10px]"></i>
+          <i *ngIf="contrato.status === 'Sem assinatura'" class="pi pi-exclamation-triangle text-[10px]"></i>
+          <i *ngIf="contrato.status === 'Encerrado'" class="pi pi-folder text-[10px]"></i>
+              {{ contrato.status }}
           </span>
         </div>
       </div>
 
       <div class="mt-3 pt-3 border-t border-surface-border flex items-center justify-between">
-        <span class="text-ink-faint text-xs">{{ contrato.data_locacao }}</span>
+        <span class="text-ink-faint text-xs">{{ contrato.data_entrega | date: 'dd/MM/yyyy' }}</span>
         <i class="pi pi-chevron-right text-ink-faint text-xs"></i>
       </div>
     </div>

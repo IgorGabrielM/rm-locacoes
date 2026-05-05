@@ -23,9 +23,13 @@ export class ContratoService {
     return this.http.get<Contrato>(`${this.API}/${id}`);
   }
 
-  assinarDocumento(id: string, signatureBase64: string): Observable<any> {
+  assinarContrato(id: string, signatureBase64: string): Observable<any> {
     return this.http.patch(`${this.API}/${id}/signature`, {
       signature: signatureBase64
     });
+  }
+
+  finalizarContrato(id: string): Observable<any> {
+    return this.http.post(`${this.API}/${id}/closure`, {});
   }
 }

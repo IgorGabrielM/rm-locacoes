@@ -22,6 +22,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   loading = true;
   deveAssinar = false;
   gerandoPDF = false;
+  encerrando = false;
   hoje = new Date();
 
   constructor(
@@ -120,7 +121,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
       return;
     }
     const base64 = this.signaturePad.toDataURL('image/png');
-    this.contratoService.assinarDocumento(this.contrato.id, base64).subscribe({
+    this.contratoService.assinarContrato(this.contrato.id!, base64).subscribe({
       next: () => {
         alert('Contrato assinado com sucesso!');
         this.router.navigate(['/sucesso']);
@@ -129,11 +130,35 @@ export class ContratoDetails implements OnInit, AfterViewInit {
     });
   }
 
+  calcularMeses(): number {
+    if (!this.contrato?.data_entrega || !this.contrato?.data_encerramento) return 1;
+    const start = new Date(this.contrato.data_entrega);
+    const end = new Date(this.contrato.data_encerramento);
+    const meses = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
+    return Math.max(1, meses);
+  }
+
   calcularTotal(): number {
     if (!this.contrato?.equipamentos) return 0;
+    const meses = this.calcularMeses();
     return this.contrato.equipamentos.reduce((total, equip) => {
-      return total + ((equip.valor || 0) * (equip.quantidade || 0));
+      return total + ((equip.valor || 0) * (equip.quantidade || 0) * meses);
     }, 0);
+  }
+
+  encerrarContrato() {
+    if (!this.contrato?.id || this.encerrando) return;
+    this.encerrando = true;
+    this.contratoService.finalizarContrato(this.contrato.id).subscribe({
+      next: () => {
+        this.getContrato(this.contrato.id!);
+        this.encerrando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao encerrar contrato', err);
+        this.encerrando = false;
+      }
+    });
   }
 
   voltar() {

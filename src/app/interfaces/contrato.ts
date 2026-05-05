@@ -10,7 +10,7 @@ export interface Contrato {
   bairro: string;
   telefone: string;
   email: string;
-  data_locacao: string;
+  status: string;
   data_entrega: string;
   data_encerramento: string;
   equipamentos: Equipamento[];

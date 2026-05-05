@@ -6,11 +6,7 @@
               (click)="voltar()">
       </button>
       <span class="font-semibold text-white tracking-wide text-base">Detalhes do Contrato</span>
-      <button pButton type="button" [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
-              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
-              [disabled]="gerandoPDF"
-              (click)="exportarPDF()">
-      </button>
+      <div class="w-10"></div>
     </div>
   </header>
 
@@ -49,17 +45,29 @@
       </div>
 
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
-        <div class="px-4 py-3 border-b border-surface-border">
+        <div class="px-4 py-3 border-b border-surface-border flex items-center justify-between">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Período da Locação</h2>
+          <span *ngIf="contrato.status"
+                class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full border"
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700 border-emerald-200': contrato.status === 'Em andamento',
+                  'bg-red-50 text-red-700 border-red-200': contrato.status === 'Sem assinatura',
+                  'bg-gray-100 text-gray-600 border-gray-300': contrato.status === 'Encerrado'
+                }">
+            <i *ngIf="contrato.status === 'Em andamento'" class="pi pi-check text-[10px]"></i>
+            <i *ngIf="contrato.status === 'Sem assinatura'" class="pi pi-exclamation-triangle text-[10px]"></i>
+            <i *ngIf="contrato.status === 'Encerrado'" class="pi pi-folder text-[10px]"></i>
+            {{ contrato.status }}
+          </span>
         </div>
         <div class="p-4 grid grid-cols-2 gap-4">
           <div>
-            <p class="text-xs text-ink-faint mb-0.5">Data de locação</p>
-            <p class="font-semibold text-ink">{{ contrato.data_locacao | date: 'dd/MM/yyyy' }}</p>
-          </div>
-          <div>
             <p class="text-xs text-ink-faint mb-0.5">Data de entrega</p>
             <p class="font-semibold text-ink">{{ contrato.data_entrega | date: 'dd/MM/yyyy' }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-ink-faint mb-0.5">Data de encerramento</p>
+            <p class="font-semibold text-ink">{{ contrato.data_encerramento ? (contrato.data_encerramento | date: 'dd/MM/yyyy') : '—' }}</p>
           </div>
         </div>
       </div>
@@ -84,7 +92,12 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="footer" *ngIf="contrato.equipamentos?.length">
-            <tr class="border-t-2 border-surface-border">
+            <tr class="border-t border-surface-border">
+              <td colspan="3" class="py-2 px-4 text-right text-xs text-ink-faint">
+                {{ calcularMeses() }} {{ calcularMeses() === 1 ? 'mês' : 'meses' }}
+              </td>
+            </tr>
+            <tr class="border-t border-surface-border">
               <td colspan="2" class="py-3 px-4 text-right font-semibold text-ink text-sm">Total</td>
               <td class="py-3 px-4 text-right font-bold text-ink text-base">{{ calcularTotal() | currency:'BRL' }}</td>
             </tr>
@@ -125,6 +138,25 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Secao de botoes -->
+    <div *ngIf="!loading && contrato" class="w-full flex justify-between px-5 pb-6 gap-3">
+      <button pButton type="button"
+              [label]="gerandoPDF ? 'Gerando PDF...' : 'Baixar Contrato'"
+              [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+              [disabled]="gerandoPDF"
+              (click)="exportarPDF()"
+              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'20%','justify-content':'center'}">
+      </button>
+      <button *ngIf="contrato.status !== 'Encerrado'"
+              pButton type="button"
+              [label]="encerrando ? 'Encerrando...' : 'Encerrar Contrato'"
+              [icon]="encerrando ? 'pi pi-spin pi-spinner' : 'pi pi-times-circle'"
+              [disabled]="encerrando"
+              (click)="encerrarContrato()"
+              [style]="{'background':'#e75151','border-color':'#e04444','width':'20%','justify-content':'center'}">
+      </button>
     </div>
   </div>
 

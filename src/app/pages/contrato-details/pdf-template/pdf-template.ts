@@ -13,10 +13,19 @@ export class PdfTemplate {
 
   constructor(public elementRef: ElementRef) {}
 
+  calcularMeses(): number {
+    if (!this.contrato?.data_entrega || !this.contrato?.data_encerramento) return 1;
+    const start = new Date(this.contrato.data_entrega);
+    const end = new Date(this.contrato.data_encerramento);
+    const meses = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
+    return Math.max(1, meses);
+  }
+
   calcularTotal(): number {
     if (!this.contrato?.equipamentos) return 0;
+    const meses = this.calcularMeses();
     return this.contrato.equipamentos.reduce((total, equip) => {
-      return total + ((equip.valor || 0) * (equip.quantidade || 0));
+      return total + ((equip.valor || 0) * (equip.quantidade || 0) * meses);
     }, 0);
   }
 }
