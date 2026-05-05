@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import {AuthService} from '../../services/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -8,13 +10,38 @@ import {AuthService} from '../../services/auth.service';
   styleUrl: './auth.scss',
 })
 export class Auth {
+  form: FormGroup;
+  loading = false;
+  erro = '';
+
   constructor(
-    private authService: AuthService) {
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+  ) {
+    this.form = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
+
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/home']);
+    }
   }
 
   login(): void {
-    this.authService.login({email: 'fl41.art@gmail.com', password: 'Familia440'}).subscribe((res) => {
-      console.log(res);
-    })
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.loading = true;
+    this.erro = '';
+    this.authService.login(this.form.value).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: () => {
+        this.erro = 'E-mail ou senha inválidos.';
+        this.loading = false;
+      },
+    });
   }
 }

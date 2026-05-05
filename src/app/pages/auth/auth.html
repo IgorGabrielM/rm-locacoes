@@ -11,13 +11,45 @@
 
     <div class="bg-surface rounded-2xl shadow-card border border-surface-border p-8">
       <h2 class="text-lg font-semibold text-ink mb-6">Acesso ao sistema</h2>
-      <p-button
-        label="Entrar com Google"
-        icon="pi pi-google"
-        styleClass="w-full"
-        [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}"
-        (onClick)="login()">
-      </p-button>
+
+      <form [formGroup]="form" (ngSubmit)="login()" class="flex flex-col gap-4">
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-ink-muted uppercase tracking-wide">E-mail</label>
+          <input pInputText formControlName="email" type="email" placeholder="seu@email.com"
+                 class="w-full"
+                 [class.ng-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+                 [class.ng-dirty]="form.get('email')?.touched" />
+          <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-red-500 text-xs">
+            Informe um e-mail válido.
+          </small>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-medium text-ink-muted uppercase tracking-wide">Senha</label>
+          <input pInputText formControlName="password" type="password" placeholder="••••••••"
+                 class="w-full"
+                 [class.ng-invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+                 [class.ng-dirty]="form.get('password')?.touched" />
+          <small *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-xs">
+            Informe a senha.
+          </small>
+        </div>
+
+        <div *ngIf="erro" class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
+          <i class="pi pi-exclamation-circle text-red-500 text-sm"></i>
+          <span class="text-sm text-red-600">{{ erro }}</span>
+        </div>
+
+        <button pButton type="submit"
+                [label]="loading ? 'Entrando...' : 'Entrar'"
+                [icon]="loading ? 'pi pi-spin pi-spinner' : 'pi pi-sign-in'"
+                [disabled]="loading"
+                [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center','margin-top':'0.5rem'}">
+        </button>
+
+      </form>
+
       <p class="text-center text-xs text-ink-faint mt-5">
         Acesso restrito a colaboradores autorizados
       </p>
