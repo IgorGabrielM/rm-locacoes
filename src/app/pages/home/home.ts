@@ -19,7 +19,7 @@ export class Home implements OnInit {
     const lista = this.contratos.slice().reverse();
     const filtrada = termo
       ? lista.filter(c =>
-          [c.id, c.nome, c.cpf, c.rg, c.endereco, c.bairro, c.telefone, c.email]
+          [c.id, c.nome, c.cpf, c.rg, c.endereco, c.bairro, c.telefone, c.email, c.status]
             .some(v => v?.toLowerCase().includes(termo))
         )
       : lista;

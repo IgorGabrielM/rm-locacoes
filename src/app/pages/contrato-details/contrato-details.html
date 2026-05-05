@@ -141,13 +141,13 @@
     </div>
 
     <!-- Secao de botoes -->
-    <div *ngIf="!loading && contrato" class="w-full flex justify-between px-5 pb-6 gap-3">
+    <div *ngIf="!loading && contrato && !deveAssinar" class="w-full flex flex-col items-center md:flex-row justify-between px-5 pb-6 gap-3">
       <button pButton type="button"
               [label]="gerandoPDF ? 'Gerando PDF...' : 'Baixar Contrato'"
               [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
               [disabled]="gerandoPDF"
               (click)="exportarPDF()"
-              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'20%','justify-content':'center'}">
+              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'300px','justify-content':'center'}">
       </button>
       <button *ngIf="contrato.status !== 'Encerrado'"
               pButton type="button"
@@ -155,7 +155,7 @@
               [icon]="encerrando ? 'pi pi-spin pi-spinner' : 'pi pi-times-circle'"
               [disabled]="encerrando"
               (click)="encerrarContrato()"
-              [style]="{'background':'#e75151','border-color':'#e04444','width':'20%','justify-content':'center'}">
+              [style]="{'background':'#e75151','border-color':'#e04444','width':'300px','justify-content':'center'}">
       </button>
     </div>
   </div>
@@ -167,6 +167,29 @@
     </div>
   </p-blockUI>
 
+</div>
+
+<!-- Modal de sucesso após assinatura -->
+<div *ngIf="showSuccessModal" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm px-6">
+  <div class="bg-surface rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center p-8 gap-6">
+    <div class="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center">
+      <i class="pi pi-check-circle text-emerald-600" style="font-size: 3rem;"></i>
+    </div>
+    <div class="text-center flex flex-col gap-2">
+      <h2 class="text-2xl font-bold text-ink">Contrato Assinado!</h2>
+      <p class="text-sm text-ink-muted">
+        Seu contrato foi assinado com sucesso.
+      </p>
+      <div class="flex items-center justify-center gap-1.5 mt-1 text-xs text-ink-faint">
+        <i class="pi pi-download text-xs"></i>
+        <span>O download do PDF foi iniciado automaticamente.</span>
+      </div>
+    </div>
+    <button pButton type="button" label="Ir para o início" icon="pi pi-home"
+            [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}"
+            (click)="fecharModalSucesso()">
+    </button>
+  </div>
 </div>
 
 <!-- Template PDF renderizado fora da tela para captura -->

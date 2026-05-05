@@ -24,6 +24,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   gerandoPDF = false;
   encerrando = false;
   hoje = new Date();
+  showSuccessModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -123,11 +124,20 @@ export class ContratoDetails implements OnInit, AfterViewInit {
     const base64 = this.signaturePad.toDataURL('image/png');
     this.contratoService.assinarContrato(this.contrato.id!, base64).subscribe({
       next: () => {
-        alert('Contrato assinado com sucesso!');
-        this.router.navigate(['/sucesso']);
+        this.contrato.signature = base64;
+        this.contrato.status = 'Em andamento';
+        this.deveAssinar = false;
+        this.cdr.detectChanges();
+        this.showSuccessModal = true;
+        this.exportarPDF();
       },
       error: (err) => console.error('Erro ao assinar', err)
     });
+  }
+
+  fecharModalSucesso() {
+    this.showSuccessModal = false;
+    this.router.navigate(['/home']);
   }
 
   calcularMeses(): number {

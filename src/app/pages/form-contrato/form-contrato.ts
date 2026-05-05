@@ -121,8 +121,7 @@ export class FormContrato implements OnInit {
       `Olá ${this.contratoForm.get('nome')?.value}!
 Seu contrato de locação está pronto!
 Acesse esse link para assinar:
-${linkAssinatura}
-          `;
+${linkAssinatura}`;
     this.router.navigate(['../']);
     const mensagemUrl = encodeURIComponent(mensagem);
     const url = `https://wa.me/${res.telefone}?text=${mensagemUrl}`;
