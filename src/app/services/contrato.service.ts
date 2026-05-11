@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {Contrato} from '../interfaces/contrato';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContratoService {
-  private readonly API = 'https://backend-locacao.vercel.app/contratos';
+  private readonly API = `${environment.apiUrl}/contratos`;
 
   constructor(private http: HttpClient) { }
 
@@ -29,7 +30,7 @@ export class ContratoService {
     });
   }
 
-  finalizarContrato(id: string): Observable<any> {
-    return this.http.post(`${this.API}/${id}/closure`, {});
+  finalizarContrato(id: string, dataEncerramento: string): Observable<any> {
+    return this.http.post(`${this.API}/${id}/closure`, { dataEncerramento: dataEncerramento });
   }
 }

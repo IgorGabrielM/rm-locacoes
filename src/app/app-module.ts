@@ -24,9 +24,14 @@ import {BlockUI} from 'primeng/blockui';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {definePreset} from '@primeng/themes';
 import { Auth } from './pages/auth/auth';
+import { CatalogoEquipamentos } from './pages/catalogo-equipamentos/catalogo-equipamentos';
 import {SkeletonModule} from 'primeng/skeleton';
 import {TableModule} from 'primeng/table';
 import {AutoComplete} from 'primeng/autocomplete';
+import {DatePickerModule} from 'primeng/datepicker';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {AuthInterceptor} from './interceptors/auth.interceptor';
+import {ErrorInterceptor} from './interceptors/error.interceptor';
 
 const MyTheme = definePreset(Lara, {
   semantic: {
@@ -53,7 +58,8 @@ const MyTheme = definePreset(Lara, {
     FormContrato,
     ContratoDetails,
     PdfTemplate,
-    Auth
+    Auth,
+    CatalogoEquipamentos,
   ],
   imports: [
     BrowserModule,
@@ -73,9 +79,12 @@ const MyTheme = definePreset(Lara, {
     ProgressSpinner,
     SkeletonModule,
     TableModule,
-    AutoComplete
+    AutoComplete,
+    DatePickerModule
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     providePrimeNG({
       theme: {
         preset: MyTheme, // Usa o nosso preset com azul forçado

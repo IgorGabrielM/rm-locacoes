@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input } from '@angular/core';
+import { ContratoCalculoService } from '../../../services/contrato-calculo.service';
 import { Contrato } from '../../../interfaces/contrato';
 
 @Component({
@@ -11,21 +12,8 @@ export class PdfTemplate {
   @Input() contrato!: Contrato;
   @Input() hoje!: Date;
 
-  constructor(public elementRef: ElementRef) {}
+  constructor(public elementRef: ElementRef, private calculo: ContratoCalculoService) {}
 
-  calcularMeses(): number {
-    if (!this.contrato?.data_entrega || !this.contrato?.data_encerramento) return 1;
-    const start = new Date(this.contrato.data_entrega);
-    const end = new Date(this.contrato.data_encerramento);
-    const meses = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
-    return Math.max(1, meses);
-  }
-
-  calcularTotal(): number {
-    if (!this.contrato?.equipamentos) return 0;
-    const meses = this.calcularMeses();
-    return this.contrato.equipamentos.reduce((total, equip) => {
-      return total + ((equip.valor || 0) * (equip.quantidade || 0) * meses);
-    }, 0);
-  }
+  calcularPeriodoLabel(): string { return this.calculo.calcularPeriodoLabel(this.contrato); }
+  calcularTotal(): number { return this.calculo.calcularTotal(this.contrato); }
 }

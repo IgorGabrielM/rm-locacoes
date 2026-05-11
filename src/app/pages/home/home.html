@@ -6,6 +6,10 @@
         <span class="font-semibold text-white tracking-wide text-base">RM Locações</span>
       </div>
       <span class="text-white/60 text-xs font-medium uppercase tracking-widest">Contratos</span>
+      <button pButton type="button" icon="pi pi-box" pTooltip="Catálogo de equipamentos"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="irParaCatalogo()">
+      </button>
     </div>
   </header>
 
@@ -50,7 +54,7 @@
     </button>
   </div>
 
-  <!-- Nenhum resultado -->
+  <!-- Nenhum resultado da busca -->
   <div *ngIf="!loading && contratos.length > 0 && contratosFiltrados.length === 0"
        class="flex flex-col items-center justify-center px-8 py-20 text-center">
     <i class="pi pi-search text-4xl text-ink-faint mb-4"></i>
@@ -74,7 +78,7 @@
         </div>
         <div class="flex flex-col items-end gap-2 shrink-0">
           <span class="text-ink font-semibold text-sm">
-            {{ getValorTotal(contrato) | currency:'BRL':'symbol':'1.2-2' }}
+            {{ calcularTotal(contrato) | currency:'BRL' }}
           </span>
           <span *ngIf="contrato.status"
                   class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full border"

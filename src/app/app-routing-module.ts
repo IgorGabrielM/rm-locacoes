@@ -4,6 +4,7 @@ import { Home } from './pages/home/home';
 import { FormContrato } from './pages/form-contrato/form-contrato';
 import { ContratoDetails } from './pages/contrato-details/contrato-details';
 import { Auth } from './pages/auth/auth';
+import { CatalogoEquipamentos } from './pages/catalogo-equipamentos/catalogo-equipamentos';
 import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -30,6 +31,11 @@ const routes: Routes = [
   {
     path: 'auth',
     component: Auth,
+  },
+  {
+    path: 'catalogo-equipamentos',
+    component: CatalogoEquipamentos,
+    canActivate: [authGuard],
   },
 ];
 

@@ -1,6 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ContratoService} from '../../services/contrato.service';
+import {ContratoCalculoService} from '../../services/contrato-calculo.service';
 import {Contrato} from '../../interfaces/contrato';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -25,10 +26,13 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   encerrando = false;
   hoje = new Date();
   showSuccessModal = false;
+  showEncerrarModal = false;
+  dataEncerramento: Date = new Date();
 
   constructor(
     private route: ActivatedRoute,
     private contratoService: ContratoService,
+    private calculo: ContratoCalculoService,
     private cdr: ChangeDetectorRef,
     private router: Router,
   ) {}
@@ -140,26 +144,24 @@ export class ContratoDetails implements OnInit, AfterViewInit {
     this.router.navigate(['/home']);
   }
 
-  calcularMeses(): number {
-    if (!this.contrato?.data_entrega || !this.contrato?.data_encerramento) return 1;
-    const start = new Date(this.contrato.data_entrega);
-    const end = new Date(this.contrato.data_encerramento);
-    const meses = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
-    return Math.max(1, meses);
+  calcularPeriodoLabel(): string { return this.calculo.calcularPeriodoLabel(this.contrato); }
+  calcularTotal(): number { return this.calculo.calcularTotal(this.contrato); }
+
+  abrirModalEncerrar() {
+    this.dataEncerramento = new Date();
+    this.showEncerrarModal = true;
   }
 
-  calcularTotal(): number {
-    if (!this.contrato?.equipamentos) return 0;
-    const meses = this.calcularMeses();
-    return this.contrato.equipamentos.reduce((total, equip) => {
-      return total + ((equip.valor || 0) * (equip.quantidade || 0) * meses);
-    }, 0);
+  fecharModalEncerrar() {
+    this.showEncerrarModal = false;
   }
 
-  encerrarContrato() {
+  confirmarEncerramento() {
     if (!this.contrato?.id || this.encerrando) return;
     this.encerrando = true;
-    this.contratoService.finalizarContrato(this.contrato.id).subscribe({
+    this.showEncerrarModal = false;
+    const iso = this.dataEncerramento.toISOString().split('T')[0];
+    this.contratoService.finalizarContrato(this.contrato.id, iso).subscribe({
       next: () => {
         this.getContrato(this.contrato.id!);
         this.encerrando = false;

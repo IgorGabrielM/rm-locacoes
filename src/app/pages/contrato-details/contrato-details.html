@@ -81,24 +81,26 @@
             <tr>
               <th class="text-ink-muted font-semibold text-xs py-2 px-4">Descrição</th>
               <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-center">Qtd</th>
-              <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Valor</th>
+              <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Valor Unit.</th>
+              <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Subtotal</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-equip>
             <tr class="border-t border-surface-border">
               <td class="py-2.5 px-4 text-ink">{{ equip.descricao }}</td>
               <td class="py-2.5 px-4 text-center text-ink">{{ equip.quantidade }}</td>
-              <td class="py-2.5 px-4 text-right text-ink">{{ equip.valor | currency:'BRL' }}</td>
+              <td class="py-2.5 px-4 text-right text-ink">{{ equip.valor_cobrado | currency:'BRL' }}</td>
+              <td class="py-2.5 px-4 text-right font-medium text-ink">{{ (equip.quantidade * equip.valor_cobrado) | currency:'BRL' }}</td>
             </tr>
           </ng-template>
           <ng-template pTemplate="footer" *ngIf="contrato.equipamentos?.length">
             <tr class="border-t border-surface-border">
-              <td colspan="3" class="py-2 px-4 text-right text-xs text-ink-faint">
-                {{ calcularMeses() }} {{ calcularMeses() === 1 ? 'mês' : 'meses' }}
+              <td colspan="4" class="py-2 px-4 text-right text-xs text-ink-faint">
+                {{ calcularPeriodoLabel() }}
               </td>
             </tr>
             <tr class="border-t border-surface-border">
-              <td colspan="2" class="py-3 px-4 text-right font-semibold text-ink text-sm">Total</td>
+              <td colspan="3" class="py-3 px-4 text-right font-semibold text-ink text-sm">Total</td>
               <td class="py-3 px-4 text-right font-bold text-ink text-base">{{ calcularTotal() | currency:'BRL' }}</td>
             </tr>
           </ng-template>
@@ -147,15 +149,15 @@
               [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
               [disabled]="gerandoPDF"
               (click)="exportarPDF()"
-              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'300px','justify-content':'center'}">
+              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}">
       </button>
       <button *ngIf="contrato.status !== 'Encerrado'"
               pButton type="button"
               [label]="encerrando ? 'Encerrando...' : 'Encerrar Contrato'"
               [icon]="encerrando ? 'pi pi-spin pi-spinner' : 'pi pi-times-circle'"
               [disabled]="encerrando"
-              (click)="encerrarContrato()"
-              [style]="{'background':'#e75151','border-color':'#e04444','width':'300px','justify-content':'center'}">
+              (click)="abrirModalEncerrar()"
+              [style]="{'background':'#e75151','border-color':'#e04444','width':'100%','justify-content':'center'}">
       </button>
     </div>
   </div>
@@ -189,6 +191,50 @@
             [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}"
             (click)="fecharModalSucesso()">
     </button>
+  </div>
+</div>
+
+<!-- Modal encerrar contrato -->
+<div *ngIf="showEncerrarModal"
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-surface rounded-2xl shadow-2xl border border-surface-border overflow-hidden">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
+          <i class="pi pi-calendar text-red-600"></i>
+        </div>
+        <h3 class="font-semibold text-ink">Encerrar Contrato</h3>
+      </div>
+      <button type="button" (click)="fecharModalEncerrar()"
+              class="text-ink-faint hover:text-ink transition-colors p-1">
+        <i class="pi pi-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="p-5 flex flex-col gap-4">
+      <p class="text-sm text-ink-muted">Selecione a data de conclusão do contrato:</p>
+      <p-datepicker
+        [(ngModel)]="dataEncerramento"
+        [inline]="true"
+        [maxDate]="hoje"
+        dateFormat="dd/mm/yy"
+        styleClass="w-full">
+      </p-datepicker>
+    </div>
+
+    <div class="flex gap-3 px-5 pb-5">
+      <button pButton type="button" label="Confirmar Encerramento" icon="pi pi-check"
+              [style]="{'background':'#e75151','border-color':'#e04444','flex':'1','justify-content':'center'}"
+              (click)="confirmarEncerramento()">
+      </button>
+      <button pButton type="button" label="Cancelar" icon="pi pi-times"
+              class="p-button-outlined"
+              [style]="{'flex':'1','justify-content':'center'}"
+              (click)="fecharModalEncerrar()">
+      </button>
+    </div>
+
   </div>
 </div>
 

@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {ContratoService} from '../../services/contrato.service';
 import {Contrato} from '../../interfaces/contrato';
+import {ContratoCalculoService} from '../../services/contrato-calculo.service';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +34,7 @@ export class Home implements OnInit {
   constructor(
     private router: Router,
     private contratoService: ContratoService,
+    private calculo: ContratoCalculoService,
     private cdr: ChangeDetectorRef
   ) {
   }
@@ -54,12 +56,18 @@ export class Home implements OnInit {
     this.router.navigate(['/form-contrato']);
   }
 
+  calcularTotal(contrato: Contrato): number { return this.calculo.calcularTotal(contrato); }
+
   getValorTotal(contrato: Contrato) {
-    return contrato.equipamentos.reduce((acc: number, curr: any) => {
+    return contrato.equipamentos?.reduce((acc: number, curr: any) => {
       const qtd = curr.quantidade || 0;
-      const valor = curr.valor || 0;
+      const valor = curr.valor_cobrado || 0;
       return acc + (qtd * valor);
     }, 0);
+  }
+
+  irParaCatalogo() {
+    this.router.navigate(['/catalogo-equipamentos']);
   }
 
   navegarContratoDetalhes(contrato: Contrato) {

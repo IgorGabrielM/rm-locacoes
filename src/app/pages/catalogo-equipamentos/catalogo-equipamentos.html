@@ -1,0 +1,151 @@
+<div class="min-h-screen bg-surface-muted">
+
+  <header class="bg-primary shadow-md sticky top-0 z-10">
+    <div class="flex items-center justify-between px-4 h-14">
+      <button pButton type="button" icon="pi pi-arrow-left"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="voltar()">
+      </button>
+      <span class="font-semibold text-white tracking-wide text-base">Catálogo de Equipamentos</span>
+      <button pButton type="button" icon="pi pi-plus"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="abrirModalCriar()">
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="p-4 flex flex-col gap-3">
+    <div *ngFor="let i of [1,2,3,4,5]" class="bg-surface rounded-xl border border-surface-border p-4 shadow-card">
+      <p-skeleton width="50%" height="1rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton width="30%" height="0.875rem"></p-skeleton>
+    </div>
+  </div>
+
+  <!-- Lista vazia -->
+  <div *ngIf="!loading && equipamentos?.length === 0"
+       class="flex flex-col items-center justify-center px-8 text-center"
+       style="min-height: calc(100vh - 56px);">
+    <div class="w-20 h-20 rounded-3xl bg-surface border border-surface-border shadow-card flex items-center justify-center mb-5">
+      <i class="pi pi-box text-3xl text-ink-faint"></i>
+    </div>
+    <h2 class="text-xl font-semibold text-ink mb-2">Catálogo vazio</h2>
+    <p class="text-sm text-ink-muted max-w-xs mb-7">
+      Adicione os equipamentos disponíveis para locação.
+    </p>
+    <button pButton type="button" label="Adicionar equipamento" icon="pi pi-plus"
+            (click)="abrirModalCriar()"
+            [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','border-radius':'0.75rem','padding':'0.75rem 1.5rem','font-weight':'600'}">
+    </button>
+  </div>
+
+  <!-- Lista -->
+  <div *ngIf="!loading && equipamentos?.length > 0" class="p-4 flex flex-col gap-3">
+    <div *ngFor="let equip of equipamentos"
+         class="bg-surface rounded-xl border border-surface-border shadow-card p-4 flex items-center justify-between gap-3">
+
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <i class="pi pi-box text-primary text-base"></i>
+        </div>
+        <div class="min-w-0">
+          <p class="font-semibold text-ink text-base truncate">{{ equip.descricao }}</p>
+          <p class="text-sm text-ink-muted mt-0.5">{{ equip.valor_padrao | currency:'BRL' }} / mês</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button pButton type="button" icon="pi pi-pencil"
+                class="p-button-text p-button-sm"
+                [style]="{'color':'#1e3a5f','padding':'6px','height':'auto','min-width':'auto'}"
+                (click)="abrirModalEditar(equip)">
+        </button>
+        <button pButton type="button" icon="pi pi-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                [style]="{'padding':'6px','height':'auto','min-width':'auto'}"
+                [disabled]="excluindo === equip.id"
+                (click)="confirmarExcluir(equip.id!)">
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal criar/editar -->
+<div *ngIf="showModal"
+     class="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div class="w-full sm:max-w-sm bg-surface rounded-t-2xl sm:rounded-2xl shadow-2xl border border-surface-border overflow-hidden">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border">
+      <h3 class="font-semibold text-ink">{{ modoEdicao ? 'Editar equipamento' : 'Novo equipamento' }}</h3>
+      <button type="button" (click)="fecharModal()"
+              class="text-ink-faint hover:text-ink transition-colors p-1">
+        <i class="pi pi-times text-sm"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="salvar()" class="p-5 flex flex-col gap-4">
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Nome do equipamento</label>
+        <input pInputText formControlName="descricao" class="w-full" placeholder="Ex: Betoneira 400L"/>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-semibold text-ink-muted uppercase tracking-wide">Valor por mês (R$)</label>
+        <input pInputText type="number" step="0.01" min="0" formControlName="valor_padrao" class="w-full" placeholder="0,00"/>
+      </div>
+
+      <div class="flex gap-3 pt-1">
+        <button pButton type="submit"
+                [label]="salvando ? 'Salvando...' : (modoEdicao ? 'Salvar alterações' : 'Adicionar')"
+                icon="pi pi-check"
+                [disabled]="form.invalid || salvando"
+                [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','flex':'1','justify-content':'center'}">
+        </button>
+        <button pButton type="button" label="Cancelar"
+                class="p-button-outlined"
+                [style]="{'flex':'1','justify-content':'center'}"
+                (click)="fecharModal()">
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Modal confirmar exclusão -->
+<div *ngIf="showConfirmExcluir"
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-surface rounded-2xl shadow-2xl border border-surface-border overflow-hidden">
+
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-surface-border">
+      <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+        <i class="pi pi-exclamation-triangle text-red-600 text-sm"></i>
+      </div>
+      <h3 class="font-semibold text-ink">Excluir equipamento</h3>
+    </div>
+
+    <div class="p-5">
+      <p class="text-sm text-ink-muted">
+        Tem certeza que deseja excluir este equipamento? Ele não poderá ser usado em novos contratos.
+      </p>
+    </div>
+
+    <div class="flex gap-3 px-5 pb-5">
+      <button pButton type="button" label="Excluir" icon="pi pi-trash"
+              [style]="{'background':'#e75151','border-color':'#e04444','flex':'1','justify-content':'center'}"
+              (click)="excluir()">
+      </button>
+      <button pButton type="button" label="Cancelar"
+              class="p-button-outlined"
+              [style]="{'flex':'1','justify-content':'center'}"
+              (click)="cancelarExcluir()">
+      </button>
+    </div>
+
+  </div>
+</div>
+

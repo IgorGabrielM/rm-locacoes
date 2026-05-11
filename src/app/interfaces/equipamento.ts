@@ -1,5 +1,7 @@
 export interface Equipamento {
+  id?: string;
   descricao: string;
-  quantidade: number;
-  valor: number;
+  valor_padrao: number;
+  valor_cobrado?: number;
+  quantidade?: number; // populado pelo join com a pivot table
 }
