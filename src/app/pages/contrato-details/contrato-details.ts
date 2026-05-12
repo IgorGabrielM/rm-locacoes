@@ -28,7 +28,6 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   showSuccessModal = false;
   showEncerrarModal = false;
   dataEncerramento: Date = new Date();
-
   constructor(
     private route: ActivatedRoute,
     private contratoService: ContratoService,
@@ -175,5 +174,9 @@ export class ContratoDetails implements OnInit, AfterViewInit {
 
   voltar() {
     this.router.navigate(['/home']);
+  }
+
+  navegarParaSelecionarFilhos() {
+    this.router.navigate(['/selecionar-filhos'], { queryParams: { paiId: this.contrato.id } });
   }
 }

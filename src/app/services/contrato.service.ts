@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import {Contrato} from '../interfaces/contrato';
 import { environment } from '../../environments/environment';
 
@@ -32,5 +32,13 @@ export class ContratoService {
 
   finalizarContrato(id: string, dataEncerramento: string): Observable<any> {
     return this.http.post(`${this.API}/${id}/closure`, { dataEncerramento: dataEncerramento });
+  }
+
+  vincularFilhos(filhoIds: string[], paiId: string): Observable<any> {
+    return forkJoin(
+      filhoIds.map(filhoId =>
+        this.http.patch(`${this.API}/${filhoId}/parent`, { contratoPaiId: paiId })
+      )
+    );
   }
 }

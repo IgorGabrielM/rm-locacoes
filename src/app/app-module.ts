@@ -25,6 +25,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {definePreset} from '@primeng/themes';
 import { Auth } from './pages/auth/auth';
 import { CatalogoEquipamentos } from './pages/catalogo-equipamentos/catalogo-equipamentos';
+import { SelecionarFilhos } from './pages/selecionar-filhos/selecionar-filhos';
 import {SkeletonModule} from 'primeng/skeleton';
 import {TableModule} from 'primeng/table';
 import {AutoComplete} from 'primeng/autocomplete';
@@ -60,6 +61,7 @@ const MyTheme = definePreset(Lara, {
     PdfTemplate,
     Auth,
     CatalogoEquipamentos,
+    SelecionarFilhos,
   ],
   imports: [
     BrowserModule,

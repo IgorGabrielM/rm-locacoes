@@ -15,4 +15,5 @@ export interface Contrato {
   data_encerramento: string;
   equipamentos: Equipamento[];
   signature?: string;
+  contrato_pai_id?: string;
 }

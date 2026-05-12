@@ -1,0 +1,77 @@
+<div class="min-h-screen bg-surface-muted">
+  <header class="bg-primary shadow-md sticky top-0 z-10">
+    <div class="flex items-center justify-between px-4 h-14">
+      <button pButton type="button" icon="pi pi-arrow-left"
+              [style]="{'color':'#fff','background':'transparent','border':'none','box-shadow':'none'}"
+              (click)="voltar()">
+      </button>
+      <span class="font-semibold text-white tracking-wide text-base">Selecionar contratos filhos</span>
+      <div class="w-10"></div>
+    </div>
+  </header>
+
+  <div class="p-5 flex flex-col gap-4">
+
+    <p class="text-sm text-ink-muted">
+      Selecione os contratos do mesmo cliente que serão vinculados como filhos:
+    </p>
+
+    <ng-container *ngIf="!loading">
+      <div *ngIf="contratos.length === 0"
+           class="bg-surface rounded-xl border border-surface-border shadow-card p-6 text-center text-sm text-ink-faint">
+        Nenhum contrato elegível encontrado para este cliente.
+      </div>
+
+      <div *ngFor="let c of contratos"
+           (click)="toggle(c.id!)"
+           class="bg-surface rounded-xl border shadow-card px-4 py-3 flex items-center gap-4 cursor-pointer transition-colors"
+           [ngClass]="isSelected(c.id!) ? 'border-primary ring-1 ring-primary' : 'border-surface-border'">
+
+        <div class="flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
+             [ngClass]="isSelected(c.id!) ? 'bg-primary border-primary' : 'border-surface-border bg-surface'">
+          <i *ngIf="isSelected(c.id!)" class="pi pi-check text-white text-[10px]"></i>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-ink text-sm truncate">{{ c.nome }}</p>
+          <p class="text-xs text-ink-faint mt-0.5">
+            Entrega: {{ c.data_entrega | date:'dd/MM/yyyy' }}
+            <span *ngIf="c.data_encerramento"> · Encerrado: {{ c.data_encerramento | date:'dd/MM/yyyy' }}</span>
+          </p>
+        </div>
+
+        <span class="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border"
+              [ngClass]="{
+                'bg-emerald-50 text-emerald-700 border-emerald-200': c.status === 'Em andamento',
+                'bg-red-50 text-red-700 border-red-200': c.status === 'Sem assinatura',
+                'bg-gray-100 text-gray-600 border-gray-300': c.status === 'Encerrado'
+              }">
+          {{ c.status }}
+        </span>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Botao fixo no rodape -->
+  <div *ngIf="!loading && contratos.length > 0"
+       class="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-border px-5 py-4 flex gap-3">
+    <button pButton type="button"
+            [label]="vinculando ? 'Vinculando...' : 'Confirmar (' + selectedIds.size + ')'"
+            [icon]="vinculando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+            [disabled]="selectedIds.size === 0 || vinculando"
+            (click)="confirmar()"
+            [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','flex':'1','justify-content':'center'}">
+    </button>
+    <button pButton type="button" label="Cancelar" icon="pi pi-times"
+            class="p-button-outlined"
+            [style]="{'flex':'1','justify-content':'center'}"
+            (click)="voltar()">
+    </button>
+  </div>
+
+  <p-blockUI [blocked]="loading">
+    <div class="fixed inset-0 z-[10001] flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm" *ngIf="loading">
+      <p-progressSpinner strokeWidth="4" fill="transparent" animationDuration=".5s"></p-progressSpinner>
+    </div>
+  </p-blockUI>
+</div>

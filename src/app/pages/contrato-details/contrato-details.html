@@ -144,6 +144,13 @@
 
     <!-- Secao de botoes -->
     <div *ngIf="!loading && contrato && !deveAssinar" class="w-full flex flex-col items-center md:flex-row justify-between px-5 pb-6 gap-3">
+      <button *ngIf="!contrato.contrato_pai_id"
+              pButton type="button"
+              label="Adicionar contrato relacionado"
+              icon="pi pi-link"
+              (click)="navegarParaSelecionarFilhos()"
+              [style]="{'background':'#475569','border-color':'#334155','width':'100%','justify-content':'center'}">
+      </button>
       <button pButton type="button"
               [label]="gerandoPDF ? 'Gerando PDF...' : 'Baixar Contrato'"
               [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
