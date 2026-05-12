@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import SignaturePad from 'signature_pad';
 import {PdfTemplate} from './pdf-template/pdf-template';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-contrato-details',
@@ -28,12 +29,17 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   showSuccessModal = false;
   showEncerrarModal = false;
   dataEncerramento: Date = new Date();
+  editandoCliente = false;
+  salvandoCliente = false;
+  clienteForm!: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private contratoService: ContratoService,
     private calculo: ContratoCalculoService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit() {
@@ -146,6 +152,13 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   calcularPeriodoLabel(): string { return this.calculo.calcularPeriodoLabel(this.contrato); }
   calcularTotal(): number { return this.calculo.calcularTotal(this.contrato); }
 
+  calcularPeriodoLabelFilho(filho: Contrato): string { return this.calculo.calcularPeriodoLabel(filho); }
+  calcularTotalFilho(filho: Contrato): number { return this.calculo.calcularTotal(filho); }
+
+  calcularTotalGeral(): number { return this.calculo.calcularTotalGeral(this.contrato); }
+
+  temSubContratos(): boolean { return (this.contrato?.sub_contratos?.length || 0) > 0; }
+
   abrirModalEncerrar() {
     this.dataEncerramento = new Date();
     this.showEncerrarModal = true;
@@ -168,6 +181,38 @@ export class ContratoDetails implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Erro ao encerrar contrato', err);
         this.encerrando = false;
+      }
+    });
+  }
+
+  abrirEdicaoCliente() {
+    this.clienteForm = this.fb.group({
+      nome: [this.contrato.nome],
+      cpf: [this.contrato.cpf],
+      rg: [this.contrato.rg],
+      telefone: [this.contrato.telefone],
+      email: [this.contrato.email],
+    });
+    this.editandoCliente = true;
+  }
+
+  cancelarEdicaoCliente() {
+    this.editandoCliente = false;
+  }
+
+  salvarCliente() {
+    if (this.salvandoCliente) return;
+    this.salvandoCliente = true;
+    this.contratoService.editarCliente(this.contrato.id!, this.clienteForm.value).subscribe({
+      next: () => {
+        Object.assign(this.contrato, this.clienteForm.value);
+        this.editandoCliente = false;
+        this.salvandoCliente = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao salvar cliente', err);
+        this.salvandoCliente = false;
       }
     });
   }

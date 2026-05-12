@@ -28,6 +28,11 @@ export class ContratoCalculoService {
     return `${parteM} e ${diasExtras === 1 ? '1 dia' : `${diasExtras} dias`}`;
   }
 
+  calcularTotalGeral(contrato: Contrato): number {
+    return this.calcularTotal(contrato) +
+      (contrato.sub_contratos || []).reduce((acc, f) => acc + this.calcularTotal(f), 0);
+  }
+
   calcularTotal(contrato: Contrato): number {
     if (!contrato?.equipamentos?.length) return 0;
     const coef = this.calcularCoeficiente(contrato);

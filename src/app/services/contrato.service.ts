@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
-import {Contrato} from '../interfaces/contrato';
+import {Contrato, ContratoCliente} from '../interfaces/contrato';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -32,6 +32,12 @@ export class ContratoService {
 
   finalizarContrato(id: string, dataEncerramento: string): Observable<any> {
     return this.http.post(`${this.API}/${id}/closure`, { dataEncerramento: dataEncerramento });
+  }
+
+  editarCliente(id: string, cliente: ContratoCliente){
+    return this.http.patch(`${this.API}/${id}/cliente`, {
+      ...cliente,
+    });
   }
 
   vincularFilhos(filhoIds: string[], paiId: string): Observable<any> {

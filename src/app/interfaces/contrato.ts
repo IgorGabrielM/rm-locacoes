@@ -16,4 +16,13 @@ export interface Contrato {
   equipamentos: Equipamento[];
   signature?: string;
   contrato_pai_id?: string;
+  sub_contratos: Contrato[];
+}
+
+export interface ContratoCliente {
+  nome?: string;
+  cpf?: string;
+  rg?: string;
+  telefone?: string;
+  email?: string;
 }

@@ -13,10 +13,17 @@
   <div>
     <div *ngIf="!loading && contrato" class="p-5 flex flex-col gap-4">
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
-        <div class="px-4 py-3 border-b border-surface-border">
+        <div class="px-4 py-3 border-b border-surface-border flex items-center justify-between">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Dados do Cliente</h2>
+          <button *ngIf="!editandoCliente" type="button"
+                  class="text-ink-faint hover:text-ink transition-colors p-1"
+                  (click)="abrirEdicaoCliente()">
+            <i class="pi pi-pencil text-sm"></i>
+          </button>
         </div>
-        <div class="p-4 grid grid-cols-2 gap-4">
+
+        <!-- Modo visualização -->
+        <div *ngIf="!editandoCliente" class="p-4 grid grid-cols-2 gap-4">
           <div class="col-span-2">
             <p class="text-xs text-ink-faint mb-0.5">Nome / Razão Social</p>
             <p class="font-semibold text-ink text-base">{{ contrato.nome }}</p>
@@ -42,6 +49,46 @@
             <p class="font-medium text-ink">{{ contrato.endereco }}, {{ contrato.bairro }} — {{ contrato.cidade }}</p>
           </div>
         </div>
+
+        <!-- Modo edição -->
+        <form *ngIf="editandoCliente" [formGroup]="clienteForm" class="p-4 flex flex-col gap-3">
+          <div class="col-span-2 flex flex-col gap-1">
+            <label class="text-xs text-ink-faint">Nome / Razão Social</label>
+            <input pInputText formControlName="nome" class="w-full" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-ink-faint">CPF</label>
+              <input pInputText formControlName="cpf" class="w-full" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-ink-faint">RG</label>
+              <input pInputText formControlName="rg" class="w-full" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-ink-faint">Telefone</label>
+              <input pInputText formControlName="telefone" class="w-full" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs text-ink-faint">E-mail</label>
+              <input pInputText formControlName="email" class="w-full" />
+            </div>
+          </div>
+          <div class="flex gap-2 pt-1">
+            <button pButton type="button"
+                    [label]="salvandoCliente ? 'Salvando...' : 'Salvar'"
+                    [icon]="salvandoCliente ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+                    [disabled]="salvandoCliente"
+                    [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','flex':'1','justify-content':'center'}"
+                    (click)="salvarCliente()">
+            </button>
+            <button pButton type="button" label="Cancelar" icon="pi pi-times"
+                    class="p-button-outlined"
+                    [style]="{'flex':'1','justify-content':'center'}"
+                    (click)="cancelarEdicaoCliente()">
+            </button>
+          </div>
+        </form>
       </div>
 
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
@@ -106,6 +153,67 @@
           </ng-template>
         </p-table>
       </div>
+
+      <div class="flex items-center gap-5">
+        <hr class="w-2/5 border-gray-300">
+        <span class="whitespace-nowrap text-sm text-stone-600 font-bold">Contratos relacionados</span>
+        <hr class="w-full border-gray-300">
+      </div>
+
+      <!-- Contratos filhos -->
+      <ng-container *ngIf="temSubContratos()">
+        <div *ngFor="let filho of contrato.sub_contratos; let i = index"
+             class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+          <!-- Período do filho -->
+          <div class="px-4 pt-3 pb-2 grid grid-cols-2 gap-4 border-b border-surface-border">
+            <div>
+              <p class="text-xs text-ink-faint mb-0.5">Data de entrega</p>
+              <p class="font-semibold text-ink text-sm">{{ filho.data_entrega | date: 'dd/MM/yyyy' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-ink-faint mb-0.5">Data de encerramento</p>
+              <p class="font-semibold text-ink text-sm">{{ filho.data_encerramento ? (filho.data_encerramento | date: 'dd/MM/yyyy') : '—' }}</p>
+            </div>
+          </div>
+
+          <!-- Equipamentos do filho -->
+          <p-table [value]="filho.equipamentos" styleClass="p-datatable-sm" [tableStyle]="{'font-size':'0.875rem'}">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="text-ink-muted font-semibold text-xs py-2 px-4">Descrição</th>
+                <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-center">Qtd</th>
+                <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Valor Unit.</th>
+                <th class="text-ink-muted font-semibold text-xs py-2 px-4 text-right">Subtotal</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-equip>
+              <tr class="border-t border-surface-border">
+                <td class="py-2.5 px-4 text-ink">{{ equip.descricao }}</td>
+                <td class="py-2.5 px-4 text-center text-ink">{{ equip.quantidade }}</td>
+                <td class="py-2.5 px-4 text-right text-ink">{{ equip.valor_cobrado | currency:'BRL' }}</td>
+                <td class="py-2.5 px-4 text-right font-medium text-ink">{{ (equip.quantidade * equip.valor_cobrado) | currency:'BRL' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" *ngIf="filho.equipamentos?.length">
+              <tr class="border-t border-surface-border">
+                <td colspan="4" class="py-2 px-4 text-right text-xs text-ink-faint">
+                  {{ calcularPeriodoLabelFilho(filho) }}
+                </td>
+              </tr>
+              <tr class="border-t border-surface-border">
+                <td colspan="3" class="py-3 px-4 text-right font-semibold text-ink text-sm">Total</td>
+                <td class="py-3 px-4 text-right font-bold text-ink text-base">{{ calcularTotalFilho(filho) | currency:'BRL' }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Total geral -->
+        <div class="bg-primary rounded-xl shadow-card px-5 py-4 flex items-center justify-between">
+          <span class="text-white font-semibold text-sm">Total Geral</span>
+          <span class="text-white font-bold text-xl">{{ calcularTotalGeral() | currency:'BRL' }}</span>
+        </div>
+      </ng-container>
 
       <!-- Signature section -->
       <div *ngIf="contrato.signature" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
