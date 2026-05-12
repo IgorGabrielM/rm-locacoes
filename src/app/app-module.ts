@@ -30,6 +30,7 @@ import {SkeletonModule} from 'primeng/skeleton';
 import {TableModule} from 'primeng/table';
 import {AutoComplete} from 'primeng/autocomplete';
 import {DatePickerModule} from 'primeng/datepicker';
+import {InputNumberModule} from 'primeng/inputnumber';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {AuthInterceptor} from './interceptors/auth.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
@@ -82,7 +83,8 @@ const MyTheme = definePreset(Lara, {
     SkeletonModule,
     TableModule,
     AutoComplete,
-    DatePickerModule
+    DatePickerModule,
+    InputNumberModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

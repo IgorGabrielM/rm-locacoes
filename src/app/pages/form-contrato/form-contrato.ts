@@ -57,6 +57,7 @@ export class FormContrato implements OnInit {
       telefone: ['', Validators.required],
       email: ['', Validators.email],
       dataEntrega: [''],
+      frete: [0],
     });
   }
 
@@ -104,6 +105,14 @@ export class FormContrato implements OnInit {
 
   calcularTotalEquipamentos(): number {
     return this.itensSelecionados.reduce((acc, item) => acc + this.calcularSubtotal(item), 0);
+  }
+
+  calcularFrete(): number {
+    return Number(this.contratoForm.get('frete')?.value) || 0;
+  }
+
+  calcularTotalGeral(): number {
+    return this.calcularTotalEquipamentos() + this.calcularFrete();
   }
 
   get formValido(): boolean {

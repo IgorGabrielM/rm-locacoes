@@ -30,7 +30,8 @@ export class ContratoCalculoService {
 
   calcularTotalGeral(contrato: Contrato): number {
     return this.calcularTotal(contrato) +
-      (contrato.sub_contratos || []).reduce((acc, f) => acc + this.calcularTotal(f), 0);
+      (contrato.frete || 0) +
+      (contrato.sub_contratos || []).reduce((acc, f) => acc + this.calcularTotal(f) + (f.frete || 0), 0);
   }
 
   calcularTotal(contrato: Contrato): number {

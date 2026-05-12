@@ -14,6 +14,7 @@ export interface Contrato {
   data_entrega: string;
   data_encerramento: string;
   equipamentos: Equipamento[];
+  frete?: number;
   signature?: string;
   contrato_pai_id?: string;
   sub_contratos: Contrato[];

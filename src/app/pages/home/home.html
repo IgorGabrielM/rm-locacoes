@@ -78,7 +78,7 @@
         </div>
         <div class="flex flex-col items-end gap-2 shrink-0">
           <span class="text-ink font-semibold text-sm">
-            {{ calcularTotal(contrato) | currency:'BRL' }}
+            {{ calcularTotalGeral(contrato) | currency:'BRL' }}
           </span>
           <span *ngIf="contrato.status"
                   class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full border"

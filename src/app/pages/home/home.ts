@@ -56,7 +56,8 @@ export class Home implements OnInit {
     this.router.navigate(['/form-contrato']);
   }
 
-  calcularTotal(contrato: Contrato): number { return this.calculo.calcularTotal(contrato); }
+  calcularTotalGeral(contrato: Contrato): number {
+    return this.calculo.calcularTotalGeral(contrato); }
 
   getValorTotal(contrato: Contrato) {
     return contrato.equipamentos?.reduce((acc: number, curr: any) => {
