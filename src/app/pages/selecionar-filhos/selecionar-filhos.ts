@@ -66,7 +66,6 @@ export class SelecionarFilhos implements OnInit {
         this.router.navigate(['/contrato-details'], { queryParams: { id: this.paiId } });
       },
       error: (err) => {
-        console.error('Erro ao vincular contratos filhos', err);
         this.vinculando = false;
       }
     });

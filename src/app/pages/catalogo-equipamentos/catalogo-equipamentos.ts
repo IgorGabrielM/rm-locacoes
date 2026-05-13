@@ -49,7 +49,6 @@ export class CatalogoEquipamentos implements OnInit {
     this.equipamentoService.listar().pipe(
     ).subscribe({
       next: (lista) => {
-        console.log(lista)
         this.loading = false
         this.equipamentos = lista;
         this.cdr.detectChanges();

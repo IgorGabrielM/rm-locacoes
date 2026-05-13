@@ -45,7 +45,6 @@ export class Home implements OnInit {
 
   listarContratos() {
     this.contratoService.listarTodos().subscribe((contratos) => {
-      console.log(contratos);
       this.contratos = contratos;
       this.loading = false;
       this.cdr.detectChanges();

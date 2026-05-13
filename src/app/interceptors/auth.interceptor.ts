@@ -18,7 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(reqAutenticada).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        if (err.status === 401 && !req.url.includes('/auth/')) {
           this.authService.logout();
           this.router.navigate(['/auth']);
         }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -13,11 +13,13 @@ export class Auth {
   form: FormGroup;
   loading = false;
   erro = '';
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private crd: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -41,6 +43,7 @@ export class Auth {
       error: () => {
         this.erro = 'E-mail ou senha inválidos.';
         this.loading = false;
+        this.crd.detectChanges();
       },
     });
   }

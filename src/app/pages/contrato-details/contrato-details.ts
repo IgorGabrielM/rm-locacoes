@@ -140,7 +140,6 @@ export class ContratoDetails implements OnInit, AfterViewInit {
         this.showSuccessModal = true;
         this.exportarPDF();
       },
-      error: (err) => console.error('Erro ao assinar', err)
     });
   }
 
@@ -179,7 +178,6 @@ export class ContratoDetails implements OnInit, AfterViewInit {
         this.encerrando = false;
       },
       error: (err) => {
-        console.error('Erro ao encerrar contrato', err);
         this.encerrando = false;
       }
     });
@@ -211,7 +209,6 @@ export class ContratoDetails implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Erro ao salvar cliente', err);
         this.salvandoCliente = false;
       }
     });
