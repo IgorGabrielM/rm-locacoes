@@ -24,30 +24,45 @@
 
       <div *ngFor="let c of contratos"
            (click)="toggle(c.id!)"
-           class="bg-surface rounded-xl border shadow-card px-4 py-3 flex items-center gap-4 cursor-pointer transition-colors"
+           class="bg-surface rounded-xl border shadow-card cursor-pointer transition-colors overflow-hidden"
            [ngClass]="isSelected(c.id!) ? 'border-primary ring-1 ring-primary' : 'border-surface-border'">
 
-        <div class="flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
-             [ngClass]="isSelected(c.id!) ? 'bg-primary border-primary' : 'border-surface-border bg-surface'">
-          <i *ngIf="isSelected(c.id!)" class="pi pi-check text-white text-[10px]"></i>
+        <!-- Cabeçalho -->
+        <div class="px-4 py-3 flex items-center gap-3">
+          <div class="flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
+               [ngClass]="isSelected(c.id!) ? 'bg-primary border-primary' : 'border-surface-border bg-surface'">
+            <i *ngIf="isSelected(c.id!)" class="pi pi-check text-white text-[10px]"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-ink text-sm truncate">{{ c.nome }}</p>
+            <p class="text-xs text-ink-faint mt-0.5">
+              {{ c.endereco }}, {{ c.bairro }} — {{ c.cidade }}
+            </p>
+          </div>
+          <span class="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border"
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700 border-emerald-200': c.status === 'Em andamento',
+                  'bg-red-50 text-red-700 border-red-200': c.status === 'Sem assinatura',
+                  'bg-gray-100 text-gray-600 border-gray-300': c.status === 'Encerrado'
+                }">
+            {{ c.status }}
+          </span>
         </div>
 
-        <div class="flex-1 min-w-0">
-          <p class="font-semibold text-ink text-sm truncate">{{ c.nome }}</p>
-          <p class="text-xs text-ink-faint mt-0.5">
-            Entrega: {{ c.data_entrega | date:'dd/MM/yyyy' }}
-            <span *ngIf="c.data_encerramento"> · Encerrado: {{ c.data_encerramento | date:'dd/MM/yyyy' }}</span>
-          </p>
-        </div>
+        <div class="flex justify-between items-start pb-3">
+          <!-- Datas -->
+          <div class="px-4 flex gap-4 text-xs text-ink-faint">
+            <span>Entrega: {{ c.data_entrega | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="c.data_encerramento"><i class="pi pi-calendar-minus text-[10px] mr-0.5"></i>Encerrado: {{ c.data_encerramento | date:'dd/MM/yyyy' }}</span>
+          </div>
 
-        <span class="flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border"
-              [ngClass]="{
-                'bg-emerald-50 text-emerald-700 border-emerald-200': c.status === 'Em andamento',
-                'bg-red-50 text-red-700 border-red-200': c.status === 'Sem assinatura',
-                'bg-gray-100 text-gray-600 border-gray-300': c.status === 'Encerrado'
-              }">
-          {{ c.status }}
-        </span>
+          <!-- Equipamentos -->
+          <div *ngIf="c.equipamentos?.length" class="px-4 flex flex-col gap-1">
+            <div *ngFor="let equip of c.equipamentos" class="flex items-center justify-between text-xs">
+              <span class="text-ink-faint">{{ equip.quantidade }}x - {{ equip.descricao }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </ng-container>
   </div>

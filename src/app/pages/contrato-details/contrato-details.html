@@ -176,15 +176,40 @@
         <div *ngFor="let filho of contrato.sub_contratos; let i = index"
              class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
           <!-- Período do filho -->
-          <div class="px-4 pt-3 pb-2 grid grid-cols-2 gap-4 border-b border-surface-border">
-            <div>
-              <p class="text-xs text-ink-faint mb-0.5">Data de entrega</p>
-              <p class="font-semibold text-ink text-sm">{{ filho.data_entrega | date: 'dd/MM/yyyy' }}</p>
+          <div class="px-4 pt-3 pb-2 border-b border-surface-border">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-ink-faint mb-0.5">Data de entrega</p>
+                <p class="font-semibold text-ink text-sm">{{ filho.data_entrega | date: 'dd/MM/yyyy' }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-ink-faint mb-0.5">Data de encerramento</p>
+                <p class="font-semibold text-ink text-sm">{{ filho.data_encerramento ? (filho.data_encerramento | date: 'dd/MM/yyyy') : '—' }}</p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-ink-faint mb-0.5">Data de encerramento</p>
-              <p class="font-semibold text-ink text-sm">{{ filho.data_encerramento ? (filho.data_encerramento | date: 'dd/MM/yyyy') : '—' }}</p>
+            <div class="flex items-center justify-between mt-2">
+              <button *ngIf="filho.status !== 'Encerrado'"
+                      pButton type="button"
+                      [label]="encerrandoFilho && filhoParaEncerrar?.id === filho.id ? 'Encerrando...' : 'Encerrar'"
+                      [icon]="encerrandoFilho && filhoParaEncerrar?.id === filho.id ? 'pi pi-spin pi-spinner' : 'pi pi-times-circle'"
+                      [disabled]="encerrandoFilho"
+                      (click)="abrirModalEncerrarFilho(filho)"
+                      [style]="{'background':'#e75151','border-color':'#e04444','padding':'0.3rem 0.75rem','font-size':'0.75rem'}">
+              </button>
+              <span *ngIf="filho.status"
+                    class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full border"
+                    [ngClass]="{
+                      'bg-emerald-50 text-emerald-700 border-emerald-200': filho.status === 'Em andamento',
+                      'bg-red-50 text-red-700 border-red-200': filho.status === 'Sem assinatura',
+                      'bg-gray-100 text-gray-600 border-gray-300': filho.status === 'Encerrado'
+                    }">
+                <i *ngIf="filho.status === 'Em andamento'" class="pi pi-check text-[10px]"></i>
+                <i *ngIf="filho.status === 'Sem assinatura'" class="pi pi-exclamation-triangle text-[10px]"></i>
+                <i *ngIf="filho.status === 'Encerrado'" class="pi pi-folder text-[10px]"></i>
+                {{ filho.status }}
+              </span>
             </div>
+
           </div>
 
           <!-- Equipamentos do filho -->
@@ -274,6 +299,13 @@
               (click)="navegarParaSelecionarFilhos()"
               [style]="{'background':'#475569','border-color':'#334155','width':'100%','justify-content':'center'}">
       </button>
+      <button *ngIf="!contrato.signature"
+              pButton type="button"
+              label="Enviar WhatsApp"
+              icon="pi pi-whatsapp"
+              (click)="reenviarWhatsApp()"
+              [style]="{'background':'#16a34a','border-color':'#15803d','width':'100%','justify-content':'center'}">
+      </button>
       <button pButton type="button"
               [label]="gerandoPDF ? 'Gerando PDF...' : 'Baixar Contrato'"
               [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
@@ -362,6 +394,50 @@
               class="p-button-outlined"
               [style]="{'flex':'1','justify-content':'center'}"
               (click)="fecharModalEncerrar()">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal encerrar contrato relacionado -->
+<div *ngIf="showEncerrarFilhoModal"
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-sm bg-surface rounded-2xl shadow-2xl border border-surface-border overflow-hidden">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
+          <i class="pi pi-calendar text-red-600"></i>
+        </div>
+        <h3 class="font-semibold text-ink">Encerrar Contrato Relacionado</h3>
+      </div>
+      <button type="button" (click)="fecharModalEncerrarFilho()"
+              class="text-ink-faint hover:text-ink transition-colors p-1">
+        <i class="pi pi-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="p-5 flex flex-col gap-4">
+      <p class="text-sm text-ink-muted">Selecione a data de conclusão do contrato relacionado:</p>
+      <p-datepicker
+        [(ngModel)]="dataEncerramentoFilho"
+        [inline]="true"
+        [maxDate]="hoje"
+        dateFormat="dd/mm/yy"
+        styleClass="w-full">
+      </p-datepicker>
+    </div>
+
+    <div class="flex gap-3 px-5 pb-5">
+      <button pButton type="button" label="Confirmar Encerramento" icon="pi pi-check"
+              [style]="{'background':'#e75151','border-color':'#e04444','flex':'1','justify-content':'center'}"
+              (click)="confirmarEncerramentoFilho()">
+      </button>
+      <button pButton type="button" label="Cancelar" icon="pi pi-times"
+              class="p-button-outlined"
+              [style]="{'flex':'1','justify-content':'center'}"
+              (click)="fecharModalEncerrarFilho()">
       </button>
     </div>
 

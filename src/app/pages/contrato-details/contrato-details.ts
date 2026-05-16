@@ -32,6 +32,10 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   editandoCliente = false;
   salvandoCliente = false;
   clienteForm!: FormGroup;
+  filhoParaEncerrar: Contrato | null = null;
+  encerrandoFilho = false;
+  showEncerrarFilhoModal = false;
+  dataEncerramentoFilho: Date = new Date();
 
   constructor(
     private route: ActivatedRoute,
@@ -183,6 +187,35 @@ export class ContratoDetails implements OnInit, AfterViewInit {
     });
   }
 
+  abrirModalEncerrarFilho(filho: Contrato) {
+    this.filhoParaEncerrar = filho;
+    this.dataEncerramentoFilho = new Date();
+    this.showEncerrarFilhoModal = true;
+  }
+
+  fecharModalEncerrarFilho() {
+    this.showEncerrarFilhoModal = false;
+    this.filhoParaEncerrar = null;
+  }
+
+  confirmarEncerramentoFilho() {
+    if (!this.filhoParaEncerrar?.id || this.encerrandoFilho) return;
+    this.encerrandoFilho = true;
+    this.showEncerrarFilhoModal = false;
+    const iso = this.dataEncerramentoFilho.toISOString().split('T')[0];
+    this.contratoService.finalizarContrato(this.filhoParaEncerrar.id, iso).subscribe({
+      next: () => {
+        this.getContrato(this.contrato.id!);
+        this.encerrandoFilho = false;
+        this.filhoParaEncerrar = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.encerrandoFilho = false;
+      }
+    });
+  }
+
   abrirEdicaoCliente() {
     this.clienteForm = this.fb.group({
       nome: [this.contrato.nome],
@@ -212,6 +245,14 @@ export class ContratoDetails implements OnInit, AfterViewInit {
         this.salvandoCliente = false;
       }
     });
+  }
+
+  reenviarWhatsApp() {
+    const linkAssinatura = `https://rm-locacoes.vercel.app/contrato-details?id=${this.contrato.id}&sign=true`;
+    const mensagem = `Olá ${this.contrato.nome}!\nSeu contrato de locação está pronto!\nAcesse esse link para assinar:\n${linkAssinatura}`;
+    const telefone = `55${this.contrato.telefone.replace(/\D/g, '')}`;
+    const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+    window.open(url, '_blank');
   }
 
   voltar() {

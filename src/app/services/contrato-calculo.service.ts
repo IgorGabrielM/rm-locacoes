@@ -15,6 +15,9 @@ export class ContratoCalculoService {
 
   calcularCoeficiente(contrato: Contrato): number {
     const dias = this.calcularDias(contrato);
+    if (contrato.data_encerramento) {
+      return dias / 30;
+    }
     return Math.max(1, dias / 30);
   }
 

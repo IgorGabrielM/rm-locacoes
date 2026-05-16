@@ -90,6 +90,7 @@ export class FormContrato implements OnInit {
     setTimeout(() => {
       if (this.equipAutoComplete?.inputEL?.nativeElement) {
         this.equipAutoComplete.inputEL.nativeElement.value = '';
+        this.equipAutoComplete.inputEL.nativeElement.blur();
       }
       this.cdr.detectChanges();
     }, 0);
