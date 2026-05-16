@@ -188,7 +188,7 @@
               </div>
             </div>
             <div class="flex items-center justify-between mt-2">
-              <button *ngIf="filho.status !== 'Encerrado'"
+              <button *ngIf="filho.status !== 'Encerrado' && !deveAssinar"
                       pButton type="button"
                       [label]="encerrandoFilho && filhoParaEncerrar?.id === filho.id ? 'Encerrando...' : 'Encerrar'"
                       [icon]="encerrandoFilho && filhoParaEncerrar?.id === filho.id ? 'pi pi-spin pi-spinner' : 'pi pi-times-circle'"
