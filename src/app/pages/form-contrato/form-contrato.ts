@@ -87,13 +87,9 @@ export class FormContrato implements OnInit {
       this.itensSelecionados = [...this.itensSelecionados, { equipamento: equip, quantidade: 1 }];
     }
     this.equipamentoInput = null;
-    setTimeout(() => {
-      if (this.equipAutoComplete?.inputEL?.nativeElement) {
-        this.equipAutoComplete.inputEL.nativeElement.value = '';
-        this.equipAutoComplete.inputEL.nativeElement.blur();
-      }
-      this.cdr.detectChanges();
-    }, 0);
+    this.equipAutoComplete.inputEL.nativeElement.value = '';
+    this.equipAutoComplete.inputEL.nativeElement.blur();
+    this.cdr.detectChanges();
   }
 
   removerItem(index: number) {
