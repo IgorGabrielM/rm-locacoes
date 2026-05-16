@@ -256,7 +256,7 @@
       </ng-container>
 
       <!-- Signature section -->
-      <div *ngIf="contrato.signature && !deveAssinar" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div *ngIf="todosSigados() && !deveAssinar" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
         <div class="px-4 py-3 border-b border-surface-border flex items-center gap-2">
           <i class="pi pi-check-circle text-emerald-600 text-sm"></i>
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h2>
@@ -269,7 +269,7 @@
     </div>
 
     <!-- Signature pad -->
-    <div *ngIf="deveAssinar" class="mx-5 mb-5 bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+    <div *ngIf="deveAssinar && !todosSigados()" class="mx-5 mb-5 bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
       <div class="px-4 py-3 border-b border-surface-border">
         <h3 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h3>
       </div>
