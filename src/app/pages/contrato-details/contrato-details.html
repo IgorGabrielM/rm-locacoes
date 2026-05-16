@@ -15,7 +15,7 @@
       <div class="bg-surface rounded-xl border border-surface-border shadow-card">
         <div class="px-4 py-3 border-b border-surface-border flex items-center justify-between">
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Dados do Cliente</h2>
-          <button *ngIf="!editandoCliente" type="button"
+          <button *ngIf="!editandoCliente && !deveAssinar" type="button"
                   class="text-ink-faint hover:text-ink transition-colors p-1"
                   (click)="abrirEdicaoCliente()">
             <i class="pi pi-pencil text-sm"></i>
@@ -256,7 +256,7 @@
       </ng-container>
 
       <!-- Signature section -->
-      <div *ngIf="contrato.signature" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div *ngIf="contrato.signature && !deveAssinar" class="bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
         <div class="px-4 py-3 border-b border-surface-border flex items-center gap-2">
           <i class="pi pi-check-circle text-emerald-600 text-sm"></i>
           <h2 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h2>
@@ -288,6 +288,17 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Botao de download quando deveAssinar e todos ja assinaram -->
+    <div *ngIf="!loading && contrato && deveAssinar && todosSigados()" class="w-full px-5 pb-6">
+      <button pButton type="button"
+              [label]="gerandoPDF ? 'Gerando PDF...' : 'Baixar Contrato'"
+              [icon]="gerandoPDF ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+              [disabled]="gerandoPDF"
+              (click)="exportarPDF()"
+              [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}">
+      </button>
     </div>
 
     <!-- Secao de botoes -->

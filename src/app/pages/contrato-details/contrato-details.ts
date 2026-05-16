@@ -162,6 +162,12 @@ export class ContratoDetails implements OnInit, AfterViewInit {
 
   temSubContratos(): boolean { return (this.contrato?.sub_contratos?.length || 0) > 0; }
 
+  todosSigados(): boolean {
+    if (!this.contrato?.signature) return false;
+    if (!this.temSubContratos()) return true;
+    return this.contrato.sub_contratos.every(f => !!f.signature);
+  }
+
   abrirModalEncerrar() {
     this.dataEncerramento = new Date();
     this.showEncerrarModal = true;
