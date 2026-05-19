@@ -268,14 +268,32 @@
 
     </div>
 
+    <!-- Termos e Condições -->
+    <div *ngIf="deveAssinar && !todosSigados()" class="mx-5 mb-4 bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
+      <div class="px-4 py-3 border-b border-surface-border">
+        <h3 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Termos e Condições</h3>
+      </div>
+      <div class="p-4 flex flex-col gap-3 text-xs text-ink leading-relaxed">
+        <p><strong>Do Objeto da locação:</strong> A locadora aluga ao locatário os bens ou propriedade acima descritos, para o uso de sua responsabilidade a obra conforme solicitado pelo mesmo.</p>
+        <p><strong>O preço da locação é de {{ calcularTotalGeral() | currency:'BRL' }}</strong>, referente a {{ calcularPeriodoLabel() }} de locação. Estará sujeito a reajuste após o período da data de entrega.</p>
+        <p><strong>Estado de conservação:</strong> Os equipamentos encontram-se em perfeito estado de conservação e funcionamento.</p>
+        <p><strong>Manutenção e substituição:</strong> De peças e equipamentos é obrigação do locatário manter os equipamentos em bom estado de conservação e funcionamento conforme lhes foram entregues, devendo, se necessário, efetuar substituição de peças por outra da mesma qualidade, por sua inteira conta e responsabilidade.</p>
+        <p><strong>Quaisquer acidentes</strong> ocorridos com os equipamentos locados ou por eles causados a terceiros, desde sua retirada até a sua devolução e recebimento, será de exclusiva responsabilidade do locatário.</p>
+        <p><strong>Usar cabo elétrico 4mm, não deixar o motor pegar umidade.</strong></p>
+      </div>
+    </div>
+
     <!-- Signature pad -->
     <div *ngIf="deveAssinar && !todosSigados()" class="mx-5 mb-5 bg-surface rounded-xl border border-surface-border shadow-card overflow-hidden">
       <div class="px-4 py-3 border-b border-surface-border">
         <h3 class="text-xs font-semibold text-ink-muted uppercase tracking-widest">Assinatura do Locatário</h3>
       </div>
       <div class="p-4 flex flex-col items-center gap-4">
+        <div class="w-full text-center py-2 px-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <p class="text-xs font-semibold text-amber-700 tracking-wide">Assine abaixo</p>
+        </div>
         <div class="border-2 border-dashed border-surface-border rounded-xl bg-surface-muted overflow-hidden">
-          <canvas #canvas width="350" height="200"></canvas>
+          <canvas #canvas width="350" height="500"></canvas>
         </div>
         <div class="flex gap-3 w-full">
           <button pButton type="button" label="Confirmar" icon="pi pi-check"
@@ -360,7 +378,7 @@
         <span>O download do PDF foi iniciado automaticamente.</span>
       </div>
     </div>
-    <button pButton type="button" label="Ir para o início" icon="pi pi-home"
+    <button pButton type="button" label="Fechar" icon="pi pi-home"
             [style]="{'background':'#1e3a5f','border-color':'#1e3a5f','width':'100%','justify-content':'center'}"
             (click)="fecharModalSucesso()">
     </button>

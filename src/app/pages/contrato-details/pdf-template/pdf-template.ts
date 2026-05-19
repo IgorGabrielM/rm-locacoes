@@ -16,4 +16,9 @@ export class PdfTemplate {
 
   calcularPeriodoLabel(): string { return this.calculo.calcularPeriodoLabel(this.contrato); }
   calcularTotal(): number { return this.calculo.calcularTotal(this.contrato); }
+
+  calcularTotalGeral(): number { return this.calculo.calcularTotalGeral(this.contrato); }
+
+  calcularPeriodoLabelFilho(filho: Contrato): string { return this.calculo.calcularPeriodoLabel(filho); }
+  calcularTotalFilho(filho: Contrato): number { return this.calculo.calcularTotal(filho); }
 }

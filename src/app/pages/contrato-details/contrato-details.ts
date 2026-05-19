@@ -148,9 +148,7 @@ export class ContratoDetails implements OnInit, AfterViewInit {
   }
 
   fecharModalSucesso() {
-    this.showSuccessModal = false;
-    this.router.navigate(['/home']);
-  }
+    this.showSuccessModal = }
 
   calcularPeriodoLabel(): string { return this.calculo.calcularPeriodoLabel(this.contrato); }
   calcularTotal(): number { return this.calculo.calcularTotal(this.contrato); }

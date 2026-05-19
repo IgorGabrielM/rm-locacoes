@@ -92,8 +92,8 @@
               [style.background]="odd ? '#f9f9f9' : '#ffffff'">
             <td style="border:1px solid #000;padding:6px 10px;">{{ equip.descricao }}</td>
             <td style="border:1px solid #000;padding:6px 10px;text-align:center;">{{ equip.quantidade }}</td>
-            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ equip.valor_padrao | currency:'BRL' }}</td>
-            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ (equip.valor_padrao * equip.quantidade) | currency:'BRL' }}</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ (equip.valor_cobrado || equip.valor_padrao) | currency:'BRL' }}</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:right;">{{ ((equip.valor_cobrado || equip.valor_padrao) * equip.quantidade) | currency:'BRL' }}</td>
           </tr>
         </tbody>
         <tfoot>
@@ -102,18 +102,130 @@
               Período: {{ calcularPeriodoLabel() }}
             </td>
           </tr>
+          <tr *ngIf="contrato.frete">
+            <td colspan="3" style="border:1px solid #000;padding:6px 10px;text-align:right;font-size:11.5px;">Frete</td>
+            <td style="border:1px solid #000;padding:6px 10px;text-align:right;font-size:11.5px;">{{ contrato.frete | currency:'BRL' }}</td>
+          </tr>
           <tr style="background:#000;color:#fff;">
-            <td colspan="3" style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">TOTAL GERAL</td>
+            <td colspan="3" style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">SUBTOTAL</td>
             <td style="border:1px solid #000;padding:8px 10px;text-align:right;font-weight:700;font-size:14px;">{{ calcularTotal() | currency:'BRL' }}</td>
           </tr>
         </tfoot>
       </table>
     </div>
 
+    <!-- Contratos Adicionais (filhos) -->
+    <ng-container *ngIf="contrato.sub_contratos?.length">
+      <div style="margin-top:24px;">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;color:#000;">
+          Contratos Adicionais
+        </div>
+
+        <div *ngFor="let filho of contrato.sub_contratos; let i = index"
+             style="border:1.5px solid #888;border-radius:4px;padding:16px;margin-bottom:12px;">
+
+          <!-- Cabeçalho do card -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;">
+              Contrato Adicional {{ i + 1 }}
+            </div>
+            <div *ngIf="!filho.signature"
+                 style="font-size:9px;font-weight:700;color:#cc0000;letter-spacing:0.5px;border:1px solid #cc0000;padding:2px 8px;border-radius:3px;">
+              <span class="pb-1">Contrato não assinado</span>
+            </div>
+          </div>
+
+          <!-- Período do filho -->
+          <table style="width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:10px;">
+            <tr>
+              <td style="border:1px solid #ccc;padding:5px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Entrega</td>
+              <td style="border:1px solid #ccc;padding:5px 10px;">{{ filho.data_entrega | date:'dd/MM/yyyy' }}</td>
+              <td style="border:1px solid #ccc;padding:5px 10px;font-weight:600;background:#f0f0f0;width:160px;">Data de Encerramento</td>
+              <td style="border:1px solid #ccc;padding:5px 10px;">{{ filho.data_encerramento ? (filho.data_encerramento | date:'dd/MM/yyyy') : '—' }}</td>
+            </tr>
+            <tr *ngIf="filho.status">
+              <td style="border:1px solid #ccc;padding:5px 10px;font-weight:600;background:#f0f0f0;">Status</td>
+              <td style="border:1px solid #ccc;padding:5px 10px;" colspan="3">{{ filho.status }}</td>
+            </tr>
+          </table>
+
+          <!-- Equipamentos do filho -->
+          <table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+            <thead>
+              <tr style="background:#444;color:#fff;">
+                <th style="border:1px solid #444;padding:6px 10px;text-align:left;font-weight:700;">Descrição</th>
+                <th style="border:1px solid #444;padding:6px 10px;text-align:center;font-weight:700;width:55px;">Qtd</th>
+                <th style="border:1px solid #444;padding:6px 10px;text-align:right;font-weight:700;width:120px;">Vl. Unitário</th>
+                <th style="border:1px solid #444;padding:6px 10px;text-align:right;font-weight:700;width:120px;">Vl. Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let equip of filho.equipamentos; let odd = odd"
+                  [style.background]="odd ? '#f9f9f9' : '#ffffff'">
+                <td style="border:1px solid #ccc;padding:5px 10px;">{{ equip.descricao }}</td>
+                <td style="border:1px solid #ccc;padding:5px 10px;text-align:center;">{{ equip.quantidade }}</td>
+                <td style="border:1px solid #ccc;padding:5px 10px;text-align:right;">{{ (equip.valor_cobrado || equip.valor_padrao) | currency:'BRL' }}</td>
+                <td style="border:1px solid #ccc;padding:5px 10px;text-align:right;">{{ ((equip.valor_cobrado || equip.valor_padrao) * equip.quantidade) | currency:'BRL' }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" style="border:1px solid #ccc;padding:4px 10px;text-align:right;font-size:10px;color:#555;">
+                  Período: {{ calcularPeriodoLabelFilho(filho) }}
+                </td>
+              </tr>
+              <tr *ngIf="filho.frete">
+                <td colspan="3" style="border:1px solid #ccc;padding:6px 10px;text-align:right;font-size:11.5px;">Frete</td>
+                <td style="border:1px solid #ccc;padding:6px 10px;text-align:right;font-size:11.5px;">{{ filho.frete | currency:'BRL' }}</td>
+              </tr>
+              <tr style="background:#444;color:#fff;">
+                <td colspan="3" style="border:1px solid #444;padding:7px 10px;text-align:right;font-weight:700;font-size:12px;">TOTAL</td>
+                <td style="border:1px solid #444;padding:7px 10px;text-align:right;font-weight:700;font-size:13px;">{{ calcularTotalFilho(filho) | currency:'BRL' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Total Geral -->
+    <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+      <div style="background:#000;color:#fff;display:flex;align-items:center;gap:32px;padding:10px 16px;border-radius:4px;min-width:300px;justify-content:space-between;">
+        <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Total Geral</span>
+        <span style="font-size:15px;font-weight:700;">{{ calcularTotalGeral() | currency:'BRL' }}</span>
+      </div>
+    </div>
+
+    <!-- Termos e Condições -->
+    <div style="margin-top:24px;border:1px solid #ccc;border-radius:4px;padding:14px 16px;font-size:10.5px;line-height:1.6;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;color:#000;">
+        Termos e Condições
+      </div>
+      <p style="margin:0 0 7px;">
+        <strong>Do Objeto da locação:</strong> A locadora aluga ao locatário os bens ou propriedade acima descritos, para o uso de sua responsabilidade a obra conforme solicitado pelo mesmo.
+      </p>
+      <p style="margin:0 0 7px;">
+'        <strong>O preço da locação é de {{ calcularTotalGeral() | currency:'BRL' }}</strong>, referente a {{ calcularPeriodoLabel() }} de locação. Estará sujeito a reajuste após o período da data de entrega.'
+      </p>
+      <p style="margin:0 0 7px;">
+        <strong>Estado de conservação:</strong> Os equipamentos encontram-se em perfeito estado de conservação e funcionamento.
+      </p>
+      <p style="margin:0 0 7px;">
+        <strong>Manutenção e substituição:</strong> De peças e equipamentos é obrigação do locatário manter os equipamentos em bom estado de conservação e funcionamento conforme lhes foram entregues, devendo, se necessário, efetuar substituição de peças por outra da mesma qualidade, por sua inteira conta e responsabilidade.
+      </p>
+      <p style="margin:0 0 7px;">
+        <strong>Quaisquer acidentes</strong> ocorridos com os equipamentos locados ou por eles causados a terceiros, desde sua retirada até a sua devolução e recebimento, será de exclusiva responsabilidade do locatário.
+      </p>
+      <p style="margin:0;">
+        <strong>Usar cabo elétrico 4mm, não deixar o motor pegar umidade.</strong>
+      </p>
+    </div>
+
     <!-- Espaçador -->
     <div style="flex:1;min-height:32px;"></div>
 
-    <!-- Assinaturas -->
+    <!-- Assinaturas (contrato principal) -->
     <div>
       <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;color:#000;">
         Assinaturas
@@ -126,13 +238,17 @@
             <img [src]="contrato.signature" style="max-height:80px;max-width:100%;">
           </div>
           <div *ngIf="!contrato.signature"
-               style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;"></div>
+               style="height:90px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #cc0000;margin-bottom:6px;">
+            <span style="font-size:10px;font-weight:700;color:#cc0000;letter-spacing:0.5px;">Contrato não assinado</span>
+          </div>
           <div style="font-size:10px;font-weight:600;margin-top:4px;">{{ contrato.nome }}</div>
           <div style="font-size:9px;color:#555;margin-top:2px;">Locatário(a)</div>
         </div>
 
         <div style="flex:1;text-align:center;">
-          <div style="height:90px;border-bottom:1px solid #000;margin-bottom:6px;"></div>
+          <div style="height:90px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #000;margin-bottom:6px;">
+            <img src="/resources/assinatura-responsavel.png" style="max-height:80px;max-width:100%;">
+          </div>
           <div style="font-size:10px;font-weight:600;margin-top:4px;">RM Locações</div>
           <div style="font-size:9px;color:#555;margin-top:2px;">Locadora — Responsável</div>
         </div>
